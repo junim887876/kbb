@@ -7,27 +7,46 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KB Detail Admin">
-  <title>KB Detail co. — Painel do Proprietário</title>
+  <title>KB Detail adm</title>
   <link rel="manifest" id="pwa-manifest">
   <link rel="apple-touch-icon" href="kaik.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- OneSignal SDK v16 (Owner Role) -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "d32b9113-7dbc-4029-9110-ba617fe69593",
+        serviceWorkerPath: "sw.js",
+        serviceWorkerParam: { scope: "./" }
+      });
+      await OneSignal.User.addTag("role", "owner");
+    });
+
+    function requestOwnerPush() {
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.Notifications.requestPermission();
+        await OneSignal.User.addTag("role", "owner");
+        showToast("Notificações do proprietário ativadas!");
+      });
+    }
+  </script>
+
   <style>
     :root {
       --bg-base: #07090e;
       --glass-bg: rgba(255, 255, 255, 0.06);
-      --glass-bg-elevated: rgba(20, 25, 38, 0.85);
       --glass-border: rgba(255, 255, 255, 0.14);
       --glass-highlight: rgba(255, 255, 255, 0.25);
       --accent: #38bdf8;
       --accent-glow: rgba(56, 189, 248, 0.35);
-      --accent-secondary: #818cf8;
       --gold: #fbbf24;
-      --gold-glow: rgba(251, 191, 36, 0.28);
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
-      --text-muted: #64748b;
       --success: #34d399;
       --warning: #fb923c;
       --danger: #f87171;
@@ -55,55 +74,17 @@
       user-select: none;
     }
 
-    /* Ambient Mesh Orbs */
-    .ambient-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(88px);
-      opacity: 0.42;
-      animation: float 16s infinite alternate ease-in-out;
-    }
-
-    .orb-1 {
-      width: 310px;
-      height: 310px;
-      background: radial-gradient(circle, #0284c7, transparent 70%);
-      top: -60px;
-      left: -80px;
-    }
-
-    .orb-2 {
-      width: 340px;
-      height: 340px;
-      background: radial-gradient(circle, #4f46e5, transparent 70%);
-      top: 38%;
-      right: -110px;
-      animation-delay: -5s;
-    }
-
-    .orb-3 {
-      width: 280px;
-      height: 280px;
-      background: radial-gradient(circle, #0ea5e9, transparent 70%);
-      bottom: -50px;
-      left: 10%;
-      animation-delay: -10s;
-    }
+    .ambient-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(88px); opacity: 0.42; animation: float 16s infinite alternate ease-in-out; }
+    .orb-1 { width: 310px; height: 310px; background: radial-gradient(circle, #0284c7, transparent 70%); top: -60px; left: -80px; }
+    .orb-2 { width: 340px; height: 340px; background: radial-gradient(circle, #4f46e5, transparent 70%); top: 38%; right: -110px; animation-delay: -5s; }
+    .orb-3 { width: 280px; height: 280px; background: radial-gradient(circle, #0ea5e9, transparent 70%); bottom: -50px; left: 10%; animation-delay: -10s; }
 
     @keyframes float {
       0% { transform: translate(0, 0) scale(1); }
       100% { transform: translate(25px, 35px) scale(1.1); }
     }
 
-    /* App Container */
     .app-shell {
       position: relative;
       z-index: 1;
@@ -112,7 +93,6 @@
       padding: calc(var(--safe-top) + 12px) 16px calc(var(--safe-bottom) + 96px);
     }
 
-    /* Glass Card Utility */
     .glass {
       background: var(--glass-bg);
       backdrop-filter: blur(24px) saturate(180%);
@@ -122,874 +102,239 @@
     }
 
     /* Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
     .brand-logo-wrap {
-      width: 52px;
-      height: 52px;
-      border-radius: 15px;
-      overflow: hidden;
-      border: 1.5px solid rgba(56, 189, 248, 0.45);
-      box-shadow: 0 4px 18px var(--accent-glow);
-      flex-shrink: 0;
-      background: #0d111a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 52px; height: 52px; border-radius: 15px; overflow: hidden;
+      border: 1.5px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 18px var(--accent-glow);
+      flex-shrink: 0; background: #0d111a; display: flex; align-items: center; justify-content: center;
     }
+    .brand-logo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    .brand-logo-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .brand-text h1 {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
+    .brand-text h1 { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
     .admin-pill {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 6px;
-      background: rgba(251, 191, 36, 0.18);
-      border: 1px solid rgba(251, 191, 36, 0.4);
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 6px;
+      background: rgba(251, 191, 36, 0.18); border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--gold); text-transform: uppercase;
     }
+    .brand-text p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
-    .brand-text p {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 2px;
+    .header-btns { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-primary); cursor: pointer;
     }
+    .icon-btn:active { transform: scale(0.94); }
 
-    .header-action-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-primary);
-      cursor: pointer;
-      position: relative;
-    }
+    /* Tabs */
+    .tab-view { display: none; animation: fadeIn 0.22s ease; }
+    .tab-view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    .notif-dot {
-      position: absolute;
-      top: 9px;
-      right: 9px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 8px var(--accent);
-    }
-
-    /* Tab Panels */
-    .tab-view {
-      display: none;
-      animation: fadeIn 0.22s ease;
-    }
-
-    .tab-view.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Section Headings */
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      padding: 0 2px;
-    }
-
-    .section-header h3 {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 2px; }
+    .section-header h3 { font-size: 16px; font-weight: 700; }
     .section-header span, .section-link {
-      font-size: 12px;
-      color: var(--accent);
-      font-weight: 600;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
+      font-size: 12px; color: var(--accent); font-weight: 600;
+      background: none; border: none; cursor: pointer; font-family: inherit;
     }
 
-    /* KPI Revenue Cards */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 14px;
+    /* Push Banner */
+    .push-card {
+      border-radius: 18px; padding: 12px 14px; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .push-card span { font-size: 12px; color: var(--text-primary); line-height: 1.35; }
+    .push-btn {
+      padding: 8px 12px; border-radius: 12px; border: none;
+      background: var(--accent); color: #05111e; font-family: inherit;
+      font-size: 11px; font-weight: 800; white-space: nowrap; cursor: pointer;
     }
 
-    .kpi-card {
-      border-radius: 22px;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
+    /* KPI Cards */
+    .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .kpi-card { border-radius: 22px; padding: 16px; }
     .kpi-card.highlight {
       background: linear-gradient(145deg, rgba(56, 189, 248, 0.16), rgba(255, 255, 255, 0.04));
       border-color: rgba(56, 189, 248, 0.32);
     }
+    .kpi-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .kpi-value { font-size: 20px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+    .kpi-trend { font-size: 11px; font-weight: 700; color: var(--success); }
 
-    .kpi-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
+    .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+    .mini-box { border-radius: 18px; padding: 12px 10px; text-align: center; }
+    .mini-box strong { display: block; font-size: 16px; font-weight: 800; }
+    .mini-box span { font-size: 11px; color: var(--text-secondary); }
 
-    .kpi-value {
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .kpi-trend {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--success);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* Mini Metrics Row */
-    .mini-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-
-    .mini-box {
-      border-radius: 18px;
-      padding: 12px 10px;
-      text-align: center;
-    }
-
-    .mini-box strong {
-      display: block;
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--text-primary);
-    }
-
-    .mini-box span {
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    /* Weekly Revenue Bar Chart */
-    .chart-card {
-      border-radius: 24px;
-      padding: 18px;
-      margin-bottom: 20px;
-    }
-
-    .chart-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 16px;
-    }
-
-    .chart-top h4 {
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .chart-top p {
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    .goal-pill {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 9px;
-      border-radius: 99px;
-      background: rgba(52, 211, 153, 0.14);
-      color: var(--success);
-      border: 1px solid rgba(52, 211, 153, 0.3);
-    }
-
-    .bars-wrap {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      align-items: flex-end;
-      height: 118px;
-      padding-top: 10px;
-    }
-
-    .bar-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      height: 100%;
-      justify-content: flex-end;
-    }
-
-    .bar-val {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-secondary);
-    }
-
-    .bar-fill {
-      width: 100%;
-      max-width: 38px;
-      border-radius: 10px 10px 6px 6px;
-      background: linear-gradient(180deg, #38bdf8 0%, rgba(56, 189, 248, 0.25) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      transition: height 0.4s ease;
-    }
-
-    .bar-col.current .bar-fill {
-      background: linear-gradient(180deg, #34d399 0%, rgba(52, 211, 153, 0.3) 100%);
-      border-color: var(--success);
-      box-shadow: 0 0 16px rgba(52, 211, 153, 0.3);
-    }
-
-    .bar-lbl {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    /* Quick Owner Tools */
-    .owner-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
+    /* Owner Shortcuts */
+    .owner-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
     .owner-btn {
-      border-radius: 18px;
-      padding: 13px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      text-align: left;
+      border-radius: 18px; padding: 13px 14px; display: flex; align-items: center; gap: 10px;
+      color: var(--text-primary); font-family: inherit; font-size: 13px; font-weight: 700;
+      cursor: pointer; text-align: left;
     }
+    .owner-btn-icon { width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    .owner-btn:active {
-      transform: scale(0.97);
-    }
-
-    .owner-btn-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* Filter Pills for Agenda */
-    .filter-row {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      margin-bottom: 14px;
-      scrollbar-width: none;
-    }
-
-    .filter-row::-webkit-scrollbar {
-      display: none;
-    }
-
+    /* Filters & Bookings */
+    .filter-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
     .filter-chip {
-      padding: 8px 14px;
-      border-radius: 99px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-secondary);
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-      cursor: pointer;
+      padding: 8px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-secondary);
+      font-family: inherit; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer;
     }
+    .filter-chip.active { background: var(--accent); color: #05111e; border-color: var(--accent); }
 
-    .filter-chip.active {
-      background: var(--accent);
-      color: #05111e;
-      border-color: var(--accent);
-    }
-
-    /* Scheduled Client Cards */
-    .booking-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .booking-card {
-      border-radius: 22px;
-      padding: 16px;
-      position: relative;
-    }
-
-    .booking-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
+    .booking-list { display: flex; flex-direction: column; gap: 12px; }
+    .booking-card { border-radius: 22px; padding: 16px; }
+    .booking-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
     .booking-time-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 10px;
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 800;
+      padding: 4px 10px; border-radius: 10px; background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3); color: var(--accent); font-size: 12px; font-weight: 800;
     }
+    .status-badge { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 8px; }
+    .status-agendado { background: rgba(251, 191, 36, 0.16); color: var(--gold); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .status-lavando { background: rgba(56, 189, 248, 0.18); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.35); }
+    .status-concluido { background: rgba(52, 211, 153, 0.16); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.3); }
 
-    .status-badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 9px;
-      border-radius: 8px;
-    }
-
-    .status-agendado {
-      background: rgba(251, 191, 36, 0.16);
-      color: var(--gold);
-      border: 1px solid rgba(251, 191, 36, 0.3);
-    }
-
-    .status-lavando {
-      background: rgba(56, 189, 248, 0.18);
-      color: var(--accent);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-    }
-
-    .status-concluido {
-      background: rgba(52, 211, 153, 0.16);
-      color: var(--success);
-      border: 1px solid rgba(52, 211, 153, 0.3);
-    }
-
-    .booking-client {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 2px;
-    }
-
-    .booking-vehicle {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-
+    .booking-client { font-size: 16px; font-weight: 800; margin-bottom: 2px; }
+    .booking-vehicle { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
     .booking-services {
-      font-size: 12px;
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.04);
-      padding: 8px 11px;
-      border-radius: 12px;
-      margin-bottom: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.07);
+      font-size: 12px; color: var(--text-primary); background: rgba(255, 255, 255, 0.04);
+      padding: 8px 11px; border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(255, 255, 255, 0.07);
     }
-
-    .booking-obs {
-      font-size: 12px;
-      color: var(--warning);
-      margin-bottom: 12px;
-      font-style: italic;
-    }
-
+    .booking-obs { font-size: 12px; color: var(--warning); margin-bottom: 12px; font-style: italic; }
     .booking-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.09);
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.09);
     }
-
-    .booking-price {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--success);
-    }
-
-    .booking-btns {
-      display: flex;
-      gap: 6px;
-    }
-
+    .booking-price { font-size: 16px; font-weight: 800; color: var(--success); }
+    .booking-btns { display: flex; gap: 6px; }
     .sm-btn {
-      padding: 7px 11px;
-      border-radius: 11px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.07);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      padding: 7px 11px; border-radius: 11px; border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.07); color: var(--text-primary); font-family: inherit;
+      font-size: 11px; font-weight: 700; cursor: pointer; text-decoration: none;
     }
+    .sm-btn.primary { background: var(--accent); color: #05111e; border-color: var(--accent); }
+    .sm-btn.done { background: rgba(52, 211, 153, 0.2); color: var(--success); border-color: rgba(52, 211, 153, 0.4); }
 
-    .sm-btn.primary {
-      background: var(--accent);
-      color: #05111e;
-      border-color: var(--accent);
-    }
-
-    .sm-btn.done {
-      background: rgba(52, 211, 153, 0.2);
-      color: var(--success);
-      border-color: rgba(52, 211, 153, 0.4);
-    }
-
-    /* Stock / Inventory Cards */
-    .stock-list {
-      display: flex;
-      flex-direction: column;
-      gap: 11px;
-    }
-
-    .stock-card {
-      border-radius: 20px;
-      padding: 15px 16px;
-    }
-
-    .stock-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .stock-name strong {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .stock-name span {
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    .stock-alert {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 7px;
-      text-transform: uppercase;
-    }
-
-    .alert-low {
-      background: rgba(248, 113, 113, 0.18);
-      color: var(--danger);
-      border: 1px solid rgba(248, 113, 113, 0.35);
-    }
-
-    .alert-ok {
-      background: rgba(52, 211, 153, 0.15);
-      color: var(--success);
-      border: 1px solid rgba(52, 211, 153, 0.3);
-    }
-
-    .stock-controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .progress-track {
-      flex: 1;
-      height: 8px;
-      border-radius: 99px;
-      background: rgba(255, 255, 255, 0.08);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 99px;
-      transition: width 0.3s ease;
-    }
-
+    /* Stock */
+    .stock-list { display: flex; flex-direction: column; gap: 11px; }
+    .stock-card { border-radius: 20px; padding: 15px 16px; }
+    .stock-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .stock-name strong { display: block; font-size: 14px; font-weight: 700; }
+    .stock-name span { font-size: 11px; color: var(--text-secondary); }
+    .stock-alert { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 7px; text-transform: uppercase; }
+    .alert-low { background: rgba(248, 113, 113, 0.18); color: var(--danger); border: 1px solid rgba(248, 113, 113, 0.35); }
+    .alert-ok { background: rgba(52, 211, 153, 0.15); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.3); }
+    .stock-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .progress-track { flex: 1; height: 8px; border-radius: 99px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 99px; transition: width 0.3s ease; }
     .qty-stepper {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.06);
-      padding: 4px 6px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.06);
+      padding: 4px 6px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12);
     }
-
     .step-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 9px;
-      border: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--text-primary);
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
+      width: 28px; height: 28px; border-radius: 9px; border: none;
+      background: rgba(255, 255, 255, 0.1); color: var(--text-primary);
+      font-size: 16px; font-weight: 800; cursor: pointer;
     }
+    .qty-val { font-size: 13px; font-weight: 800; min-width: 48px; text-align: center; }
 
-    .qty-val {
-      font-size: 13px;
-      font-weight: 800;
-      min-width: 44px;
-      text-align: center;
-    }
-
-    /* Price Editor & Promotions & Coupons */
+    /* Prices, Promos & Coupons */
     .price-card {
-      border-radius: 20px;
-      padding: 15px 16px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      border-radius: 20px; padding: 15px 16px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
     }
-
-    .price-info strong {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .price-info span {
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
+    .price-info strong { display: block; font-size: 14px; font-weight: 700; }
+    .price-info span { font-size: 11px; color: var(--text-secondary); }
     .price-edit-box {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      padding: 6px 10px;
-      border-radius: 12px;
+      display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(56, 189, 248, 0.35); padding: 6px 10px; border-radius: 12px;
     }
-
-    .price-edit-box span {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
+    .price-edit-box span { font-size: 13px; font-weight: 700; color: var(--accent); }
     .price-input {
-      width: 58px;
-      background: transparent;
-      border: none;
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: 800;
-      text-align: right;
-      outline: none;
+      width: 58px; background: transparent; border: none; color: var(--text-primary);
+      font-family: inherit; font-size: 16px; font-weight: 800; text-align: right; outline: none;
     }
 
-    /* Promo & Coupon Cards */
-    .promo-card, .coupon-card {
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-
-    .promo-header, .coupon-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-
+    .promo-card, .coupon-card { border-radius: 20px; padding: 16px; margin-bottom: 12px; }
+    .promo-header, .coupon-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; }
     .coupon-code {
-      font-family: monospace;
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      padding: 4px 10px;
-      border-radius: 9px;
-      background: rgba(56, 189, 248, 0.16);
-      border: 1px dashed var(--accent);
-      color: var(--accent);
+      font-family: monospace; font-size: 15px; font-weight: 800; letter-spacing: 0.06em;
+      padding: 4px 10px; border-radius: 9px; background: rgba(56, 189, 248, 0.16);
+      border: 1px dashed var(--accent); color: var(--accent);
     }
 
-    /* iOS Switch */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 46px;
-      height: 26px;
-      flex-shrink: 0;
-    }
+    .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: rgba(255, 255, 255, 0.14); transition: .25s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .25s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--success); }
+    input:checked + .slider:before { transform: translateX(20px); }
 
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background-color: rgba(255, 255, 255, 0.14);
-      transition: .25s;
-      border-radius: 34px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 20px;
-      width: 20px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .25s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: var(--success);
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(20px);
-    }
-
-    /* Bottom Navigation Dock */
+    /* Bottom Dock */
     .nav-dock {
-      position: fixed;
-      bottom: calc(var(--safe-bottom) + 10px);
-      left: 14px;
-      right: 14px;
-      max-width: 452px;
-      margin: 0 auto;
-      border-radius: 24px;
-      padding: 8px;
-      background: rgba(14, 19, 30, 0.9);
-      backdrop-filter: blur(28px) saturate(200%);
+      position: fixed; bottom: calc(var(--safe-bottom) + 10px); left: 14px; right: 14px;
+      max-width: 452px; margin: 0 auto; border-radius: 24px; padding: 8px;
+      background: rgba(14, 19, 30, 0.92); backdrop-filter: blur(28px) saturate(200%);
       -webkit-backdrop-filter: blur(28px) saturate(200%);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
-      z-index: 60;
+      border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; z-index: 60;
     }
-
     .nav-item {
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      padding: 8px 4px;
-      border-radius: 16px;
-      font-family: inherit;
-      font-size: 10px;
-      font-weight: 700;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      border: none; background: transparent; color: var(--text-secondary); padding: 8px 4px;
+      border-radius: 16px; font-family: inherit; font-size: 10px; font-weight: 700;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
     }
+    .nav-item.active { background: rgba(56, 189, 248, 0.16); color: var(--accent); }
 
-    .nav-item.active {
-      background: rgba(56, 189, 248, 0.16);
-      color: var(--accent);
-    }
-
-    /* Bottom Sheet Modals */
+    /* Sheets */
     .sheet-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.28s ease;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.74);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.28s ease;
     }
-
-    .sheet-backdrop.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
 
     .bottom-sheet {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      max-width: 480px;
-      margin: 0 auto;
-      background: rgba(18, 22, 33, 0.97);
-      backdrop-filter: blur(32px) saturate(200%);
+      position: fixed; left: 0; right: 0; bottom: 0; max-width: 480px; margin: 0 auto;
+      background: rgba(18, 22, 33, 0.97); backdrop-filter: blur(32px) saturate(200%);
       -webkit-backdrop-filter: blur(32px) saturate(200%);
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 30px 30px 0 0;
-      padding: 12px 22px calc(var(--safe-bottom) + 24px);
-      z-index: 101;
-      transform: translateY(105%);
-      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
-      max-height: 90dvh;
-      overflow-y: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px 30px 0 0;
+      padding: 12px 22px calc(var(--safe-bottom) + 24px); z-index: 101;
+      transform: translateY(105%); transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+      max-height: 90dvh; overflow-y: auto;
     }
+    .bottom-sheet.open { transform: translateY(0); }
 
-    .bottom-sheet.open {
-      transform: translateY(0);
-    }
-
-    .sheet-handle {
-      width: 40px;
-      height: 5px;
-      border-radius: 99px;
-      background: rgba(255, 255, 255, 0.25);
-      margin: 0 auto 16px;
-    }
-
-    .sheet-title {
-      font-size: 19px;
-      font-weight: 800;
-      margin-bottom: 14px;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 5px;
-    }
-
+    .sheet-handle { width: 40px; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, 0.25); margin: 0 auto 16px; }
+    .sheet-title { font-size: 19px; font-weight: 800; margin-bottom: 10px; }
+    .sheet-subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.4; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
     .glass-input, .glass-select {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 16px;
-      outline: none;
+      width: 100%; padding: 12px 14px; border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-primary); font-family: inherit; font-size: 16px; outline: none;
     }
-
-    .glass-select option {
-      background: #121621;
-      color: #f8fafc;
-    }
-
+    .glass-select option { background: #121621; color: #f8fafc; }
     .full-btn {
-      width: 100%;
-      padding: 14px;
-      border-radius: 16px;
-      border: none;
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: #05111e;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      margin-top: 6px;
+      width: 100%; padding: 14px; border-radius: 16px; border: none;
+      background: linear-gradient(135deg, #38bdf8, #0284c7); color: #05111e;
+      font-family: inherit; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 6px;
     }
 
-    /* Toast */
     .toast {
-      position: fixed;
-      top: calc(var(--safe-top) + 12px);
-      left: 50%;
-      transform: translate(-50%, -120px);
-      background: rgba(22, 28, 42, 0.96);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 12px 18px;
-      border-radius: 99px;
-      font-size: 13px;
-      font-weight: 600;
-      z-index: 200;
-      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-      white-space: nowrap;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+      position: fixed; top: calc(var(--safe-top) + 12px); left: 50%;
+      transform: translate(-50%, -120px); background: rgba(22, 28, 42, 0.96);
+      backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      z-index: 200; transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); white-space: nowrap;
     }
-
-    .toast.show {
-      transform: translate(-50%, 0);
-    }
+    .toast.show { transform: translate(-50%, 0); }
   </style>
 </head>
 <body>
@@ -1003,7 +348,7 @@
   <div id="toast" class="toast">Aviso</div>
 
   <main class="app-shell">
-    <!-- Top Header with 512x512 kaik.jpg -->
+    <!-- Header -->
     <header>
       <div class="brand">
         <div class="brand-logo-wrap" title="KB Detail co.">
@@ -1011,118 +356,87 @@
         </div>
         <div class="brand-text">
           <h1>KB Detail co. <span class="admin-pill">Dono</span></h1>
-          <p>Gestão • Faturamento & Agenda</p>
+          <p id="syncStatusText">Planilha Google • Sincronizado</p>
         </div>
       </div>
-      <button class="glass header-action-btn" onclick="openNewBookingSheet()" title="Novo Agendamento Manual">
-        <span class="notif-dot"></span>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-      </button>
+
+      <div class="header-btns">
+        <!-- Botão Atualizar Planilha -->
+        <button class="glass icon-btn" onclick="syncOwnerData()" title="Atualizar Dados">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
+
+        <!-- Engrenagem URL Apps Script -->
+        <button class="glass icon-btn" onclick="openSheet('configSheet')" title="Configurar Planilha">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
     </header>
 
-    <!-- ==========================================
-         TAB 1: DASHBOARD (FATURAMENTO & RESUMO)
-         ========================================== -->
+    <!-- TAB 1: DASHBOARD -->
     <section id="tab-dashboard" class="tab-view active">
+      <!-- Push Notification Activation Card for Owner -->
+      <div class="push-card">
+        <span>🔔 Receba alerta no celular quando marcarem horário ou acabar produto.</span>
+        <button type="button" class="push-btn" onclick="requestOwnerPush()">Ativar Push</button>
+      </div>
+
       <div class="section-header">
         <h3>Faturamento</h3>
-        <span>Atualizado em tempo real</span>
+        <span>Concluídos & Previstos</span>
       </div>
 
       <div class="kpi-grid">
         <div class="glass kpi-card highlight">
-          <div class="kpi-label">
-            <span>Semanal (Fim de Sem.)</span>
-            <span>📅</span>
-          </div>
-          <div class="kpi-value" id="weeklyRevenueVal">R$ 1.285,00</div>
-          <div class="kpi-trend">▲ +18% vs semana ant.</div>
+          <div class="kpi-label"><span>Semanal (Fim de Sem.)</span><span>📅</span></div>
+          <div class="kpi-value" id="weeklyRevenueVal">R$ 0,00</div>
+          <div class="kpi-trend" id="weeklyBookedSub">Previsto: R$ 0,00</div>
         </div>
 
         <div class="glass kpi-card">
-          <div class="kpi-label">
-            <span>Mensal (Novembro)</span>
-            <span>💰</span>
-          </div>
-          <div class="kpi-value" id="monthlyRevenueVal">R$ 4.940,00</div>
-          <div class="kpi-trend">▲ 82% da meta</div>
+          <div class="kpi-label"><span>Mensal (Líquido)</span><span>💰</span></div>
+          <div class="kpi-value" id="monthlyRevenueVal">R$ 0,00</div>
+          <div class="kpi-trend" id="monthlyExpensesSub">Despesas: R$ 0,00</div>
         </div>
       </div>
 
       <div class="mini-stats">
         <div class="glass mini-box">
-          <strong id="statBookingsCount">12</strong>
+          <strong id="statBookingsCount">0</strong>
           <span>Agendados</span>
         </div>
         <div class="glass mini-box">
-          <strong id="statTicketAvg">R$ 107</strong>
+          <strong id="statTicketAvg">R$ 0</strong>
           <span>Ticket Médio</span>
         </div>
         <div class="glass mini-box">
-          <strong id="statLowStock" style="color: var(--danger);">2</strong>
+          <strong id="statLowStock" style="color: var(--danger);">0</strong>
           <span>Estoque Baixo</span>
         </div>
       </div>
 
-      <!-- Weekly Performance Chart -->
-      <div class="glass chart-card">
-        <div class="chart-top">
-          <div>
-            <h4>Desempenho Semanal</h4>
-            <p>Faturamento Sábado + Domingo</p>
-          </div>
-          <span class="goal-pill">Meta R$ 6.000/mês</span>
-        </div>
-        <div class="bars-wrap">
-          <div class="bar-col">
-            <span class="bar-val">R$ 1.120</span>
-            <div class="bar-fill" style="height: 68%;"></div>
-            <span class="bar-lbl">Sem 1</span>
-          </div>
-          <div class="bar-col">
-            <span class="bar-val">R$ 1.350</span>
-            <div class="bar-fill" style="height: 82%;"></div>
-            <span class="bar-lbl">Sem 2</span>
-          </div>
-          <div class="bar-col">
-            <span class="bar-val">R$ 1.185</span>
-            <div class="bar-fill" style="height: 72%;"></div>
-            <span class="bar-lbl">Sem 3</span>
-          </div>
-          <div class="bar-col current">
-            <span class="bar-val" id="chartCurrentBarVal">R$ 1.285</span>
-            <div class="bar-fill" style="height: 78%;"></div>
-            <span class="bar-lbl">Atual</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Owner Shortcuts -->
       <div class="section-header">
         <h3>Atalhos Rápidos</h3>
       </div>
       <div class="owner-actions">
-        <button class="glass owner-btn" onclick="openNewBookingSheet()">
+        <button class="glass owner-btn" onclick="openSheet('newBookingSheet')">
           <div class="owner-btn-icon" style="background: rgba(56,189,248,0.18); color: var(--accent);">+</div>
           <span>Encaixar Cliente</span>
         </button>
         <button class="glass owner-btn" onclick="switchTab('prices')">
           <div class="owner-btn-icon" style="background: rgba(251,191,36,0.18); color: var(--gold);">%</div>
-          <span>Criar Cupom / Promo</span>
+          <span>Cupom / Promo</span>
         </button>
         <button class="glass owner-btn" onclick="switchTab('stock')">
           <div class="owner-btn-icon" style="background: rgba(248,113,113,0.18); color: var(--danger);">!</div>
           <span>Repor Produtos</span>
         </button>
-        <button class="glass owner-btn" onclick="openExpenseSheet()">
+        <button class="glass owner-btn" onclick="openSheet('expenseSheet')">
           <div class="owner-btn-icon" style="background: rgba(52,211,153,0.18); color: var(--success);">R$</div>
           <span>Lançar Despesa</span>
         </button>
       </div>
 
-      <!-- Next Scheduled Clients Preview -->
       <div class="section-header">
         <h3>Próximos Clientes</h3>
         <button class="section-link" onclick="switchTab('agenda')">Ver agenda completa →</button>
@@ -1130,13 +444,11 @@
       <div class="booking-list" id="dashboardNextList"></div>
     </section>
 
-    <!-- ==========================================
-         TAB 2: CLIENTES AGENDADOS (SÁBADO / DOMINGO)
-         ========================================== -->
+    <!-- TAB 2: AGENDA -->
     <section id="tab-agenda" class="tab-view">
       <div class="section-header">
         <h3>Clientes Agendados</h3>
-        <button class="section-link" onclick="openNewBookingSheet()">+ Novo Horário</button>
+        <button class="section-link" onclick="openSheet('newBookingSheet')">+ Novo Horário</button>
       </div>
 
       <div class="filter-row" id="agendaFilters">
@@ -1149,42 +461,38 @@
       <div class="booking-list" id="fullAgendaList"></div>
     </section>
 
-    <!-- ==========================================
-         TAB 3: ESTOQUE DE PRODUTOS
-         ========================================== -->
+    <!-- TAB 3: ESTOQUE -->
     <section id="tab-stock" class="tab-view">
       <div class="section-header">
         <h3>Estoque de Produtos</h3>
-        <button class="section-link" onclick="openNewProductSheet()">+ Novo Produto</button>
+        <button class="section-link" onclick="openSheet('newProductSheet')">+ Novo Produto</button>
       </div>
       <div class="stock-list" id="stockListContainer"></div>
     </section>
 
-    <!-- ==========================================
-         TAB 4: PREÇOS, PROMOÇÕES & CUPONS
-         ========================================== -->
+    <!-- TAB 4: PREÇOS, PROMOÇÕES & CUPONS -->
     <section id="tab-prices" class="tab-view">
       <div class="section-header">
         <h3>Tabela de Preços</h3>
-        <button class="section-link" onclick="savePricesToast()">Salvar Tabela</button>
+        <button class="section-link" onclick="savePricesToSheet()">Salvar na Planilha</button>
       </div>
       <div id="priceEditorContainer"></div>
 
       <div class="section-header" style="margin-top: 22px;">
         <h3>Promoções Ativas</h3>
-        <button class="section-link" onclick="openNewPromoSheet()">+ Nova Promoção</button>
+        <button class="section-link" onclick="openSheet('newPromoSheet')">+ Nova Promoção</button>
       </div>
       <div id="promosContainer"></div>
 
       <div class="section-header" style="margin-top: 22px;">
         <h3>Cupons de Desconto</h3>
-        <button class="section-link" onclick="openNewCouponSheet()">+ Criar Cupom</button>
+        <button class="section-link" onclick="openSheet('newCouponSheet')">+ Criar Cupom</button>
       </div>
       <div id="couponsContainer"></div>
     </section>
   </main>
 
-  <!-- Bottom Navigation Bar -->
+  <!-- Bottom Navigation -->
   <nav class="nav-dock">
     <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
@@ -1195,7 +503,7 @@
       Agenda
     </button>
     <button class="nav-item" data-tab="stock" onclick="switchTab('stock')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
       Estoque
     </button>
     <button class="nav-item" data-tab="prices" onclick="switchTab('prices')">
@@ -1204,10 +512,22 @@
     </button>
   </nav>
 
-  <!-- Modal Backdrop -->
+  <!-- Backdrop -->
   <div class="sheet-backdrop" id="backdrop" onclick="closeAllSheets()"></div>
 
-  <!-- Sheet: Add Manual Booking -->
+  <!-- Sheet: Gear Config -->
+  <div class="bottom-sheet" id="configSheet">
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">⚙️ URL do Google Apps Script</h3>
+    <p class="sheet-subtitle">Cole a URL /exec da sua implantação do Google Sheets para sincronizar faturamento, agenda e estoque.</p>
+    <div class="form-group">
+      <label>URL do Web App (.gs)</label>
+      <input type="url" id="scriptUrlInput" class="glass-input" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+    <button class="full-btn" onclick="saveScriptUrl()">Salvar e Sincronizar</button>
+  </div>
+
+  <!-- Sheet: Manual Booking -->
   <div class="bottom-sheet" id="newBookingSheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title">Novo Agendamento Manual</h3>
@@ -1220,7 +540,7 @@
       <input type="tel" id="nbPhone" class="glass-input" placeholder="Ex: 6299887766">
     </div>
     <div class="form-group">
-      <label>Veículo (Carro ou Moto)</label>
+      <label>Veículo</label>
       <input type="text" id="nbVehicle" class="glass-input" placeholder="Ex: Civic Touring Cinza">
     </div>
     <div class="form-group">
@@ -1251,10 +571,10 @@
       <label>Observação</label>
       <input type="text" id="nbObs" class="glass-input" placeholder="Ex: Revitalizar plásticos">
     </div>
-    <button class="full-btn" onclick="createManualBooking()">Adicionar à Agenda</button>
+    <button class="full-btn" onclick="createManualBooking()">Salvar na Planilha</button>
   </div>
 
-  <!-- Sheet: Add New Product to Stock -->
+  <!-- Sheet: New Product -->
   <div class="bottom-sheet" id="newProductSheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title">Cadastrar Produto no Estoque</h3>
@@ -1264,42 +584,36 @@
     </div>
     <div class="form-group">
       <label>Categoria</label>
-      <input type="text" id="npCat" class="glass-input" placeholder="Ex: Shampoo / Proteção / Plásticos">
+      <input type="text" id="npCat" class="glass-input" placeholder="Ex: Shampoo / Proteção">
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-      <div class="form-group">
-        <label>Qtd Atual</label>
-        <input type="number" id="npQty" class="glass-input" value="5">
-      </div>
-      <div class="form-group">
-        <label>Estoque Mínimo</label>
-        <input type="number" id="npMin" class="glass-input" value="2">
-      </div>
+      <div class="form-group"><label>Qtd Atual</label><input type="number" id="npQty" class="glass-input" value="5"></div>
+      <div class="form-group"><label>Estoque Mínimo</label><input type="number" id="npMin" class="glass-input" value="2"></div>
     </div>
     <button class="full-btn" onclick="createProduct()">Salvar no Estoque</button>
   </div>
 
-  <!-- Sheet: Add New Promotion -->
+  <!-- Sheet: New Promo -->
   <div class="bottom-sheet" id="newPromoSheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title">Criar Nova Promoção</h3>
     <div class="form-group">
-      <label>Título da Promoção</label>
+      <label>Título</label>
       <input type="text" id="prTitle" class="glass-input" placeholder="Ex: Combo Brilho Total">
     </div>
     <div class="form-group">
-      <label>Descrição / Regra</label>
-      <input type="text" id="prDesc" class="glass-input" placeholder="Ex: Lavagem Detalhada + Cristalização por R$ 105">
+      <label>Descrição</label>
+      <input type="text" id="prDesc" class="glass-input" placeholder="Ex: Lavagem Detalhada + Vidros por R$ 105">
     </div>
     <button class="full-btn" onclick="createPromo()">Ativar Promoção</button>
   </div>
 
-  <!-- Sheet: Add New Coupon -->
+  <!-- Sheet: New Coupon -->
   <div class="bottom-sheet" id="newCouponSheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title">Criar Cupom de Desconto</h3>
     <div class="form-group">
-      <label>Código do Cupom</label>
+      <label>Código</label>
       <input type="text" id="cpCode" class="glass-input" placeholder="Ex: KBDETAIL15" style="text-transform: uppercase;">
     </div>
     <div class="form-group">
@@ -1309,31 +623,31 @@
     <button class="full-btn" onclick="createCoupon()">Gerar Cupom</button>
   </div>
 
-  <!-- Sheet: Register Expense -->
+  <!-- Sheet: Expense -->
   <div class="bottom-sheet" id="expenseSheet">
     <div class="sheet-handle"></div>
-    <h3 class="sheet-title">Lançar Despesa / Compra</h3>
+    <h3 class="sheet-title">Lançar Despesa</h3>
     <div class="form-group">
       <label>Descrição</label>
-      <input type="text" id="exDesc" class="glass-input" placeholder="Ex: Reposição Vonixx / Microfibras">
+      <input type="text" id="exDesc" class="glass-input" placeholder="Ex: Compra produtos Vonixx">
     </div>
     <div class="form-group">
       <label>Valor (R$)</label>
       <input type="number" id="exVal" class="glass-input" placeholder="120">
     </div>
-    <button class="full-btn" onclick="registerExpense()">Abater do Caixa</button>
+    <button class="full-btn" onclick="registerExpense()">Registrar Despesa</button>
   </div>
 
   <script>
-    // 1. Prevent Double-Tap Zoom
+    // Prevent Double-Tap Zoom
     let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
+    document.addEventListener('touchend', function (e) {
       const now = Date.now();
-      if (now - lastTouchEnd <= 300) event.preventDefault();
+      if (now - lastTouchEnd <= 300) e.preventDefault();
       lastTouchEnd = now;
     }, { passive: false });
 
-    // 2. Dynamic PWA Manifest
+    // PWA Manifest
     const manifestData = {
       name: "KB Detail co. — Gestão do Proprietário",
       short_name: "KB Admin",
@@ -1343,116 +657,37 @@
       theme_color: "#07090e",
       icons: [{ src: "kaik.jpg", sizes: "512x512", type: "image/jpeg" }]
     };
-    const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-    document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(manifestBlob));
+    document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(new Blob([JSON.stringify(manifestData)], { type: 'application/json' })));
 
-    // 3. Simulated Owner Data (No Database)
+    const KEY_SCRIPT_URL = "kb_detail_gas_url";
+    function getScriptUrl() {
+      return localStorage.getItem(KEY_SCRIPT_URL) || "";
+    }
+
     let ownerState = {
-      weeklyRevenue: 1285,
-      monthlyRevenue: 4940,
       agendaFilter: 'todos',
-      bookings: [
-        {
-          id: 1,
-          client: 'Matheus Oliveira',
-          phone: '62991234567',
-          vehicle: 'VW Golf GTI Preto',
-          day: 'Sábado',
-          time: '08:00',
-          services: 'Lavagem Detalhada Carro + Cristalização de Vidros',
-          obs: 'Cuidado extra nas rodas diamantadas.',
-          total: 115,
-          status: 'concluido'
-        },
-        {
-          id: 2,
-          client: 'Camila Ferreira',
-          phone: '62994558811',
-          vehicle: 'Jeep Compass Branco',
-          day: 'Sábado',
-          time: '09:30',
-          services: 'Lavagem Detalhada Carro + Revitalização de Plásticos',
-          obs: 'Plásticos externos bem ressecados.',
-          total: 115,
-          status: 'lavando'
-        },
-        {
-          id: 3,
-          client: 'Gabriel Santos',
-          phone: '62984129900',
-          vehicle: 'BMW S1000RR',
-          day: 'Sábado',
-          time: '11:00',
-          services: 'Lavagem Detalhada Moto + Revitalização de Plásticos',
-          obs: 'Não bater jato forte no painel.',
-          total: 85,
-          status: 'agendado'
-        },
-        {
-          id: 4,
-          client: 'Rodrigo Almeida',
-          phone: '62981223344',
-          vehicle: 'Honda Civic Touring Prata',
-          day: 'Sábado',
-          time: '14:00',
-          services: 'Lavagem Detalhada Carro + Lavagem de Motor',
-          obs: 'Motor com poeira de estrada de terra.',
-          total: 125,
-          status: 'agendado'
-        },
-        {
-          id: 5,
-          client: 'Felipe Nogueira',
-          phone: '62996332211',
-          vehicle: 'Yamaha MT-07 Azul',
-          day: 'Domingo',
-          time: '09:30',
-          services: 'Lavagem Detalhada Moto',
-          obs: '',
-          total: 65,
-          status: 'agendado'
-        },
-        {
-          id: 6,
-          client: 'Bruna Mendes',
-          phone: '62992776655',
-          vehicle: 'Toyota Corolla Cross',
-          day: 'Domingo',
-          time: '11:00',
-          services: 'Lavagem Detalhada Carro + Cristalização de Vidros',
-          obs: 'Viagem marcada para segunda.',
-          total: 115,
-          status: 'agendado'
-        }
-      ],
+      bookings: [],
       stock: [
-        { id: 1, name: 'Shampoo Snow Foam V-Floc (5L)', cat: 'Pré-Lavagem', qty: 2, min: 2, max: 6, unit: 'galões' },
-        { id: 2, name: 'Revitalizador Restaurax (500ml)', cat: 'Plásticos', qty: 1, min: 2, max: 6, unit: 'frascos' },
-        { id: 3, name: 'Cristalizador Glaco / Vidros', cat: 'Vidros', qty: 4, min: 2, max: 6, unit: 'frascos' },
-        { id: 4, name: 'Desengraxante Motor & Chassi (5L)', cat: 'Motor', qty: 3, min: 2, max: 5, unit: 'galões' },
-        { id: 5, name: 'Panos de Microfibra 400GSM', cat: 'Acessórios', qty: 14, min: 10, max: 25, unit: 'unid.' },
-        { id: 6, name: 'Pretinho Selante Pneus (1.5L)', cat: 'Acabamento', qty: 1, min: 2, max: 5, unit: 'frascos' }
+        { ID: '1', Nome: 'Shampoo Snow Foam V-Floc (5L)', Categoria: 'Pré-Lavagem', Qtd: 3, Minimo: 2, Maximo: 6, Unidade: 'galões' },
+        { ID: '2', Nome: 'Revitalizador Restaurax (500ml)', Categoria: 'Plásticos', Qtd: 1, Minimo: 2, Maximo: 6, Unidade: 'frascos' },
+        { ID: '3', Nome: 'Cristalizador Glaco / Vidros', Categoria: 'Vidros', Qtd: 4, Minimo: 2, Maximo: 6, Unidade: 'frascos' },
+        { ID: '4', Nome: 'Desengraxante Motor & Chassi (5L)', Categoria: 'Motor', Qtd: 3, Minimo: 2, Maximo: 5, Unidade: 'galões' }
       ],
       prices: [
-        { id: 'c_lav', name: 'Lavagem Detalhada — Carro', cat: 'Carro', price: 85 },
-        { id: 'c_pla', name: 'Revitalização de Plásticos Externos', cat: 'Carro', price: 30 },
-        { id: 'c_vid', name: 'Cristalização de Vidros', cat: 'Carro', price: 30 },
-        { id: 'c_mot', name: 'Lavagem de Motor', cat: 'Carro', price: 40 },
-        { id: 'm_lav', name: 'Lavagem Detalhada — Moto', cat: 'Moto', price: 65 },
-        { id: 'm_pla', name: 'Revitalização de Plásticos', cat: 'Moto', price: 20 }
+        { ID: 'carro_main', Nome: 'Lavagem Detalhada — Carro', Categoria: 'Carro', Preco: 85 },
+        { ID: 'carro_plasticos', Nome: 'Revitalização de Plásticos Externos', Categoria: 'Carro', Preco: 30 },
+        { ID: 'carro_vidros', Nome: 'Cristalização de Vidros', Categoria: 'Carro', Preco: 30 },
+        { ID: 'carro_motor', Nome: 'Lavagem de Motor', Categoria: 'Carro', Preco: 40 },
+        { ID: 'moto_main', Nome: 'Lavagem Detalhada — Moto', Categoria: 'Moto', Preco: 65 },
+        { ID: 'moto_plasticos', Nome: 'Revitalização de Plásticos', Categoria: 'Moto', Preco: 20 }
       ],
-      promos: [
-        { id: 1, title: 'Combo Proteção Total (Carro)', desc: 'Lavagem Detalhada + Plásticos + Vidros de R$ 145 por R$ 125', active: true },
-        { id: 2, title: 'Moto Zero Bala', desc: 'Lavagem Detalhada Moto + Revitalização de Plásticos por R$ 75', active: true }
-      ],
-      coupons: [
-        { id: 1, code: 'KBDETAIL10', percent: 10, uses: 14, active: true },
-        { id: 2, code: 'PRIMEIRAVEZ', percent: 15, uses: 9, active: true }
-      ]
+      promos: [],
+      coupons: [],
+      expenses: []
     };
 
     function formatBRL(v) {
-      return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
     function showToast(msg) {
@@ -1462,68 +697,120 @@
       setTimeout(() => t.classList.remove('show'), 2500);
     }
 
-    // Navigation Tabs
+    async function apiPost(payload) {
+      const url = getScriptUrl();
+      if (!url) {
+        showToast('Configure a URL na engrenagem ⚙️ primeiro');
+        return null;
+      }
+      try {
+        const res = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+        return await res.json();
+      } catch (err) {
+        showToast('Erro de conexão com a planilha');
+        return null;
+      }
+    }
+
+    async function syncOwnerData() {
+      const url = getScriptUrl();
+      const statusEl = document.getElementById('syncStatusText');
+      if (!url) {
+        statusEl.textContent = 'Clique na engrenagem ⚙️ para conectar';
+        renderAll();
+        return;
+      }
+
+      statusEl.textContent = 'Sincronizando planilha...';
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.ok) {
+          ownerState.bookings = (data.agendamentos || []).reverse();
+          if (data.estoque && data.estoque.length) ownerState.stock = data.estoque;
+          if (data.precos && data.precos.length) ownerState.prices = data.precos;
+          ownerState.promos = data.promocoes || [];
+          ownerState.coupons = data.cupons || [];
+          ownerState.expenses = data.despesas || [];
+          statusEl.textContent = 'Planilha Google • Online';
+        }
+      } catch (e) {
+        statusEl.textContent = 'Falha ao ler planilha';
+      }
+      renderAll();
+    }
+
     function switchTab(tabName) {
       document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
       document.getElementById(`tab-${tabName}`).classList.add('active');
-
-      document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tabName);
-      });
+      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabName));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Render KPIs & Dashboard
     function renderDashboard() {
-      document.getElementById('weeklyRevenueVal').textContent = formatBRL(ownerState.weeklyRevenue);
-      document.getElementById('monthlyRevenueVal').textContent = formatBRL(ownerState.monthlyRevenue);
-      document.getElementById('chartCurrentBarVal').textContent = formatBRL(ownerState.weeklyRevenue).replace(',00', '');
+      const concludedSum = ownerState.bookings
+        .filter(b => b.Status === 'concluido')
+        .reduce((acc, b) => acc + (Number(b.Total) || 0), 0);
 
-      const totalBookings = ownerState.bookings.length;
-      const sumTotal = ownerState.bookings.reduce((acc, b) => acc + b.total, 0);
-      const avg = totalBookings ? Math.round(sumTotal / totalBookings) : 0;
-      const lowStockCount = ownerState.stock.filter(s => s.qty <= s.min).length;
+      const predictedSum = ownerState.bookings
+        .filter(b => b.Status !== 'concluido')
+        .reduce((acc, b) => acc + (Number(b.Total) || 0), 0);
 
-      document.getElementById('statBookingsCount').textContent = totalBookings;
+      const expensesSum = ownerState.expenses.reduce((acc, e) => acc + (Number(e.Valor) || 0), 0);
+      const netMonthly = Math.max(0, concludedSum - expensesSum);
+
+      document.getElementById('weeklyRevenueVal').textContent = formatBRL(concludedSum);
+      document.getElementById('weeklyBookedSub').textContent = `A receber: ${formatBRL(predictedSum)}`;
+      document.getElementById('monthlyRevenueVal').textContent = formatBRL(netMonthly);
+      document.getElementById('monthlyExpensesSub').textContent = `Despesas: ${formatBRL(expensesSum)}`;
+
+      const count = ownerState.bookings.length;
+      const totalAll = concludedSum + predictedSum;
+      const avg = count ? Math.round(totalAll / count) : 0;
+      const lowStock = ownerState.stock.filter(s => Number(s.Qtd) <= Number(s.Minimo)).length;
+
+      document.getElementById('statBookingsCount').textContent = count;
       document.getElementById('statTicketAvg').textContent = `R$ ${avg}`;
-      document.getElementById('statLowStock').textContent = lowStockCount;
+      document.getElementById('statLowStock').textContent = lowStock;
 
-      const upcoming = ownerState.bookings.filter(b => b.status !== 'concluido').slice(0, 3);
-      document.getElementById('dashboardNextList').innerHTML = upcoming.map(renderBookingCard).join('');
+      const nextClients = ownerState.bookings.filter(b => b.Status !== 'concluido').slice(0, 3);
+      document.getElementById('dashboardNextList').innerHTML = nextClients.length
+        ? nextClients.map(renderBookingCard).join('')
+        : `<p style="color:var(--text-secondary); font-size:13px; text-align:center; padding:18px 0;">Nenhum cliente pendente na fila.</p>`;
     }
 
-    // Render Booking Card HTML
     function renderBookingCard(b) {
-      const statusLabels = {
+      const statusMap = {
         agendado: { text: 'Agendado', cls: 'status-agendado' },
         lavando: { text: 'No Box Agora', cls: 'status-lavando' },
         concluido: { text: 'Concluído', cls: 'status-concluido' }
       };
-      const st = statusLabels[b.status];
+      const st = statusMap[b.Status] || statusMap.agendado;
 
       let actionBtn = '';
-      if (b.status === 'agendado') {
-        actionBtn = `<button class="sm-btn primary" onclick="advanceBookingStatus(${b.id}, 'lavando')">Iniciar Box</button>`;
-      } else if (b.status === 'lavando') {
-        actionBtn = `<button class="sm-btn done" onclick="advanceBookingStatus(${b.id}, 'concluido')">✓ Finalizar</button>`;
+      if (b.Status === 'agendado') {
+        actionBtn = `<button class="sm-btn primary" onclick="changeBookingStatus('${b.ID}', 'lavando')">Iniciar Box</button>`;
+      } else if (b.Status === 'lavando') {
+        actionBtn = `<button class="sm-btn done" onclick="changeBookingStatus('${b.ID}', 'concluido')">✓ Finalizar</button>`;
       }
 
-      const wppText = encodeURIComponent(`Olá ${b.client}! Aqui é da KB Detail co. Confirmando seu horário de ${b.day} às ${b.time} para o veículo ${b.vehicle}.`);
+      const cleanPhone = String(b.Telefone || '').replace(/\D/g, '');
+      const wppMsg = encodeURIComponent(`Olá ${b.Cliente}! Aqui é da KB Detail co. Confirmando seu horário de ${b.Dia} (${b.Data}) às ${b.Horario} para o veículo ${b.Veiculo}.`);
 
       return `
         <article class="glass booking-card">
           <div class="booking-top">
-            <span class="booking-time-badge">📅 ${b.day} • ${b.time}</span>
+            <span class="booking-time-badge">📅 ${b.Dia} ${b.Data ? `(${b.Data})` : ''} • ${b.Horario}</span>
             <span class="status-badge ${st.cls}">${st.text}</span>
           </div>
-          <div class="booking-client">${b.client}</div>
-          <div class="booking-vehicle">🚘 ${b.vehicle} • 📞 ${b.phone}</div>
-          <div class="booking-services">${b.services}</div>
-          ${b.obs ? `<div class="booking-obs">Obs: "${b.obs}"</div>` : ''}
+          <div class="booking-client">${b.Cliente}</div>
+          <div class="booking-vehicle">🚘 ${b.Veiculo} • 📞 ${b.Telefone}</div>
+          <div class="booking-services">${b.Servicos}</div>
+          ${b.Observacao ? `<div class="booking-obs">Obs: "${b.Observacao}"</div>` : ''}
           <div class="booking-footer">
-            <span class="booking-price">${formatBRL(b.total)}</span>
+            <span class="booking-price">${formatBRL(b.Total)}</span>
             <div class="booking-btns">
-              <a href="https://wa.me/55${b.phone.replace(/\D/g,'')}?text=${wppText}" target="_blank" rel="noopener" class="sm-btn">WhatsApp</a>
+              <a href="https://wa.me/55${cleanPhone}?text=${wppMsg}" target="_blank" rel="noopener" class="sm-btn">WhatsApp</a>
               ${actionBtn}
             </div>
           </div>
@@ -1534,29 +821,21 @@
     function renderAgenda() {
       let list = ownerState.bookings;
       if (ownerState.agendaFilter === 'Sábado' || ownerState.agendaFilter === 'Domingo') {
-        list = list.filter(b => b.day === ownerState.agendaFilter);
+        list = list.filter(b => b.Dia === ownerState.agendaFilter);
       } else if (ownerState.agendaFilter === 'concluido') {
-        list = list.filter(b => b.status === 'concluido');
+        list = list.filter(b => b.Status === 'concluido');
       }
       document.getElementById('fullAgendaList').innerHTML = list.length
         ? list.map(renderBookingCard).join('')
-        : `<p style="text-align:center; color:var(--text-secondary); padding:30px 0; font-size:13px;">Nenhum agendamento neste filtro.</p>`;
+        : `<p style="text-align:center; color:var(--text-secondary); padding:30px 0; font-size:13px;">Nenhum agendamento encontrado.</p>`;
     }
 
-    function advanceBookingStatus(id, nextStatus) {
-      const b = ownerState.bookings.find(item => item.id === id);
-      if (!b) return;
-      b.status = nextStatus;
-
-      if (nextStatus === 'concluido') {
-        ownerState.weeklyRevenue += b.total;
-        ownerState.monthlyRevenue += b.total;
-        showToast(`Serviço concluído! +${formatBRL(b.total)} no faturamento.`);
-      } else {
-        showToast(`${b.vehicle} entrou no box de lavagem!`);
-      }
-      renderDashboard();
-      renderAgenda();
+    async function changeBookingStatus(id, nextStatus) {
+      const item = ownerState.bookings.find(b => String(b.ID) === String(id));
+      if (item) item.Status = nextStatus;
+      renderAll();
+      showToast(nextStatus === 'concluido' ? 'Lavagem concluída e somada ao caixa!' : 'Veículo no box!');
+      await apiPost({ action: 'update_booking_status', id, status: nextStatus });
     }
 
     document.querySelectorAll('#agendaFilters .filter-chip').forEach(chip => {
@@ -1568,33 +847,30 @@
       });
     });
 
-    // Render Stock
     function renderStock() {
-      const container = document.getElementById('stockListContainer');
-      container.innerHTML = ownerState.stock.map(item => {
-        const isLow = item.qty <= item.min;
-        const pct = Math.min(100, Math.round((item.qty / item.max) * 100));
+      document.getElementById('stockListContainer').innerHTML = ownerState.stock.map(item => {
+        const qty = Number(item.Qtd);
+        const min = Number(item.Minimo);
+        const max = Number(item.Maximo) || 6;
+        const isLow = qty <= min;
+        const pct = Math.min(100, Math.round((qty / max) * 100));
         const barColor = isLow ? 'var(--danger)' : 'var(--success)';
 
         return `
           <div class="glass stock-card">
             <div class="stock-top">
               <div class="stock-name">
-                <strong>${item.name}</strong>
-                <span>${item.cat} • Mínimo: ${item.min} ${item.unit}</span>
+                <strong>${item.Nome}</strong>
+                <span>${item.Categoria} • Mínimo: ${min} ${item.Unidade}</span>
               </div>
-              <span class="stock-alert ${isLow ? 'alert-low' : 'alert-ok'}">
-                ${isLow ? 'Repor Urgente' : 'Estoque OK'}
-              </span>
+              <span class="stock-alert ${isLow ? 'alert-low' : 'alert-ok'}">${isLow ? 'Repor Urgente' : 'OK'}</span>
             </div>
             <div class="stock-controls">
-              <div class="progress-track">
-                <div class="progress-fill" style="width:${pct}%; background:${barColor};"></div>
-              </div>
+              <div class="progress-track"><div class="progress-fill" style="width:${pct}%; background:${barColor};"></div></div>
               <div class="qty-stepper">
-                <button class="step-btn" onclick="changeStock(${item.id}, -1)">−</button>
-                <span class="qty-val">${item.qty} ${item.unit}</span>
-                <button class="step-btn" onclick="changeStock(${item.id}, 1)">+</button>
+                <button class="step-btn" onclick="changeStock('${item.ID}', -1)">−</button>
+                <span class="qty-val">${qty} ${item.Unidade}</span>
+                <button class="step-btn" onclick="changeStock('${item.ID}', 1)">+</button>
               </div>
             </div>
           </div>
@@ -1602,83 +878,84 @@
       }).join('');
     }
 
-    function changeStock(id, delta) {
-      const item = ownerState.stock.find(s => s.id === id);
+    async function changeStock(id, delta) {
+      const item = ownerState.stock.find(s => String(s.ID) === String(id));
       if (!item) return;
-      item.qty = Math.max(0, item.qty + delta);
+      item.Qtd = Math.max(0, Number(item.Qtd) + delta);
       renderStock();
       renderDashboard();
+      await apiPost({ action: 'update_stock', id: item.ID, qty: item.Qtd });
     }
 
-    // Render Prices, Promos & Coupons
     function renderPricesAndPromos() {
       document.getElementById('priceEditorContainer').innerHTML = ownerState.prices.map(p => `
         <div class="glass price-card">
           <div class="price-info">
-            <strong>${p.name}</strong>
-            <span>Categoria: ${p.cat}</span>
+            <strong>${p.Nome}</strong>
+            <span>Categoria: ${p.Categoria}</span>
           </div>
           <div class="price-edit-box">
             <span>R$</span>
-            <input type="number" class="price-input" value="${p.price}" onchange="updatePrice('${p.id}', this.value)">
+            <input type="number" class="price-input" value="${p.Preco}" onchange="updateLocalPrice('${p.ID}', this.value)">
           </div>
         </div>
       `).join('');
 
-      document.getElementById('promosContainer').innerHTML = ownerState.promos.map(pr => `
-        <div class="glass promo-card">
-          <div class="promo-header">
-            <strong style="font-size:14px;">🔥 ${pr.title}</strong>
-            <label class="switch">
-              <input type="checkbox" ${pr.active ? 'checked' : ''} onchange="togglePromo(${pr.id})">
-              <span class="slider"></span>
-            </label>
+      document.getElementById('promosContainer').innerHTML = ownerState.promos.map(pr => {
+        const isChecked = pr.Ativo === true || String(pr.Ativo).toUpperCase() === 'TRUE';
+        return `
+          <div class="glass promo-card">
+            <div class="promo-header">
+              <strong style="font-size:14px;">🔥 ${pr.Titulo}</strong>
+              <label class="switch">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePromo('${pr.ID}', this.checked)">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p style="font-size:12px; color:var(--text-secondary);">${pr.Descricao}</p>
           </div>
-          <p style="font-size:12px; color:var(--text-secondary);">${pr.desc}</p>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
-      document.getElementById('couponsContainer').innerHTML = ownerState.coupons.map(cp => `
-        <div class="glass coupon-card">
-          <div class="coupon-header">
-            <span class="coupon-code">${cp.code}</span>
-            <label class="switch">
-              <input type="checkbox" ${cp.active ? 'checked' : ''} onchange="toggleCoupon(${cp.id})">
-              <span class="slider"></span>
-            </label>
+      document.getElementById('couponsContainer').innerHTML = ownerState.coupons.map(cp => {
+        const isChecked = cp.Ativo === true || String(cp.Ativo).toUpperCase() === 'TRUE';
+        return `
+          <div class="glass coupon-card">
+            <div class="coupon-header">
+              <span class="coupon-code">${cp.Codigo}</span>
+              <label class="switch">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCoupon('${cp.ID}', this.checked)">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p style="font-size:12px; color:var(--text-secondary);">Desconto de <strong>${cp.DescontoPercent}%</strong> • Usado ${cp.Usos || 0}x</p>
           </div>
-          <p style="font-size:12px; color:var(--text-secondary);">Desconto de <strong>${cp.percent}%</strong> • Usado ${cp.uses}x este mês</p>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
-    function updatePrice(id, val) {
-      const p = ownerState.prices.find(item => item.id === id);
-      if (p) p.price = Number(val) || 0;
-      showToast('Valor atualizado na tabela!');
+    function updateLocalPrice(id, val) {
+      const p = ownerState.prices.find(item => String(item.ID) === String(id));
+      if (p) p.Preco = Number(val) || 0;
     }
 
-    function savePricesToast() {
-      showToast('Tabela de preços atualizada para os clientes!');
+    async function savePricesToSheet() {
+      showToast('Salvando preços na planilha...');
+      await apiPost({ action: 'save_prices', prices: ownerState.prices });
+      showToast('Preços atualizados para todos os clientes!');
     }
 
-    function togglePromo(id) {
-      const pr = ownerState.promos.find(p => p.id === id);
-      if (pr) {
-        pr.active = !pr.active;
-        showToast(pr.active ? 'Promoção ativada!' : 'Promoção pausada.');
-      }
+    async function togglePromo(id, active) {
+      await apiPost({ action: 'toggle_promo', id, active });
+      showToast(active ? 'Promoção ativada!' : 'Promoção pausada.');
     }
 
-    function toggleCoupon(id) {
-      const cp = ownerState.coupons.find(c => c.id === id);
-      if (cp) {
-        cp.active = !cp.active;
-        showToast(cp.active ? `Cupom ${cp.code} ativo!` : `Cupom ${cp.code} desativado.`);
-      }
+    async function toggleCoupon(id, active) {
+      await apiPost({ action: 'toggle_coupon', id, active });
+      showToast(active ? 'Cupom ativado!' : 'Cupom desativado.');
     }
 
-    // Bottom Sheets Logic
+    // Sheets Management
     const backdrop = document.getElementById('backdrop');
     function closeAllSheets() {
       backdrop.classList.remove('open');
@@ -1687,17 +964,22 @@
 
     function openSheet(id) {
       closeAllSheets();
+      if (id === 'configSheet') {
+        document.getElementById('scriptUrlInput').value = getScriptUrl();
+      }
       backdrop.classList.add('open');
       document.getElementById(id).classList.add('open');
     }
 
-    function openNewBookingSheet() { openSheet('newBookingSheet'); }
-    function openNewProductSheet() { openSheet('newProductSheet'); }
-    function openNewPromoSheet() { openSheet('newPromoSheet'); }
-    function openNewCouponSheet() { openSheet('newCouponSheet'); }
-    function openExpenseSheet() { openSheet('expenseSheet'); }
+    async function saveScriptUrl() {
+      const url = document.getElementById('scriptUrlInput').value.trim();
+      localStorage.setItem(KEY_SCRIPT_URL, url);
+      closeAllSheets();
+      showToast('URL salva! Sincronizando...');
+      await syncOwnerData();
+    }
 
-    function createManualBooking() {
+    async function createManualBooking() {
       const client = document.getElementById('nbName').value.trim();
       const phone = document.getElementById('nbPhone').value.trim() || '62999999999';
       const vehicle = document.getElementById('nbVehicle').value.trim();
@@ -1712,108 +994,68 @@
         return;
       }
 
-      ownerState.bookings.unshift({
-        id: Date.now(),
-        client,
-        phone,
-        vehicle,
-        day,
-        time,
-        services,
-        obs,
-        total,
-        status: 'agendado'
-      });
-
-      document.getElementById('nbName').value = '';
-      document.getElementById('nbPhone').value = '';
-      document.getElementById('nbVehicle').value = '';
-      document.getElementById('nbObs').value = '';
-
       closeAllSheets();
-      renderDashboard();
-      renderAgenda();
-      showToast('Cliente agendado com sucesso!');
+      showToast('Salvando agendamento...');
+      await apiPost({ action: 'create_booking', client, phone, vehicle, day, time, services, obs, total });
+      await syncOwnerData();
+      showToast('Cliente agendado na planilha!');
     }
 
-    function createProduct() {
+    async function createProduct() {
       const name = document.getElementById('npName').value.trim();
       const cat = document.getElementById('npCat').value.trim() || 'Geral';
       const qty = Number(document.getElementById('npQty').value) || 1;
       const min = Number(document.getElementById('npMin').value) || 2;
+      if (!name) return showToast('Informe o nome do produto');
 
-      if (!name) {
-        showToast('Informe o nome do produto');
-        return;
-      }
-
-      ownerState.stock.unshift({
-        id: Date.now(),
-        name,
-        cat,
-        qty,
-        min,
-        max: Math.max(qty + 2, 6),
-        unit: 'unid.'
-      });
-
-      document.getElementById('npName').value = '';
       closeAllSheets();
-      renderStock();
-      renderDashboard();
-      showToast('Produto adicionado ao estoque!');
+      await apiPost({ action: 'create_product', name, cat, qty, min, max: Math.max(qty + 2, 6), unit: 'unid.' });
+      await syncOwnerData();
+      showToast('Produto cadastrado!');
     }
 
-    function createPromo() {
+    async function createPromo() {
       const title = document.getElementById('prTitle').value.trim();
       const desc = document.getElementById('prDesc').value.trim();
-      if (!title || !desc) {
-        showToast('Preencha título e regra da promoção');
-        return;
-      }
-      ownerState.promos.unshift({ id: Date.now(), title, desc, active: true });
-      document.getElementById('prTitle').value = '';
-      document.getElementById('prDesc').value = '';
+      if (!title || !desc) return showToast('Preencha título e descrição');
+
       closeAllSheets();
-      renderPricesAndPromos();
-      showToast('Promoção criada e ativa!');
+      await apiPost({ action: 'create_promo', title, desc, notifyClients: false });
+      await syncOwnerData();
+      showToast('Promoção criada!');
     }
 
-    function createCoupon() {
+    async function createCoupon() {
       const code = document.getElementById('cpCode').value.trim().toUpperCase();
       const percent = Number(document.getElementById('cpPercent').value) || 10;
-      if (!code) {
-        showToast('Digite o código do cupom');
-        return;
-      }
-      ownerState.coupons.unshift({ id: Date.now(), code, percent, uses: 0, active: true });
-      document.getElementById('cpCode').value = '';
+      if (!code) return showToast('Digite o código do cupom');
+
       closeAllSheets();
-      renderPricesAndPromos();
+      await apiPost({ action: 'create_coupon', code, percent });
+      await syncOwnerData();
       showToast(`Cupom ${code} criado!`);
     }
 
-    function registerExpense() {
+    async function registerExpense() {
       const desc = document.getElementById('exDesc').value.trim();
       const val = Number(document.getElementById('exVal').value) || 0;
-      if (!desc || val <= 0) {
-        showToast('Informe a descrição e o valor');
-        return;
-      }
-      ownerState.weeklyRevenue = Math.max(0, ownerState.weeklyRevenue - val);
-      ownerState.monthlyRevenue = Math.max(0, ownerState.monthlyRevenue - val);
-      document.getElementById('exDesc').value = '';
-      document.getElementById('exVal').value = '';
+      if (!desc || val <= 0) return showToast('Preencha descrição e valor');
+
       closeAllSheets();
-      renderDashboard();
-      showToast(`Despesa de ${formatBRL(val)} lançada!`);
+      await apiPost({ action: 'create_expense', desc, val });
+      await syncOwnerData();
+      showToast('Despesa registrada na planilha!');
     }
 
-    // Initialize Owner Dashboard
-    renderDashboard();
-    renderAgenda();
-    renderStock();
-    renderPricesAndPromos();
+    function renderAll() {
+      renderDashboard();
+      renderAgenda();
+      renderStock();
+      renderPricesAndPromos();
+    }
+
+    // Boot
+    syncOwnerData();
   </script>
 </body>
 </html>
