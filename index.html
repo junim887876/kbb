@@ -7,32 +7,108 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KB Detail Admin">
-  <title>KB Detail co. — Painel do Proprietário</title>
+  <title>KB Detail co</title>
   <link rel="manifest" id="pwa-manifest">
   <link rel="apple-touch-icon" href="kaik.jpg">
-  <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-  <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-  <link href="[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap)" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- OneSignal SDK v16 (Somente no Painel do Dono) -->
-  <script src="[https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js](https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js)" defer></script>
+  <!-- OneSignal SDK v16 -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
+    window.oneSignalReady = false;
+
     OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "d32b9113-7dbc-4029-9110-ba617fe69593",
-        serviceWorkerPath: "sw.js",
-        serviceWorkerParam: { scope: "./" }
-      });
-      await OneSignal.User.addTag("role", "owner");
+      try {
+        await OneSignal.init({
+          appId: "d32b9113-7dbc-4029-9110-ba617fe69593",
+          serviceWorkerPath: "sw.js",
+          serviceWorkerParam: { scope: "./" },
+          allowLocalhostAsSecureOrigin: true
+        });
+        window.oneSignalReady = true;
+        await OneSignal.User.addTag("role", "owner");
+        updatePushCardState();
+      } catch (err) {
+        console.warn("OneSignal init error:", err);
+      }
     });
 
-    function requestOwnerPush() {
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.Notifications.requestPermission();
-        await OneSignal.User.addTag("role", "owner");
-        showToast("Notificações ativadas neste aparelho!");
-      });
+    function isStandalonePWA() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+
+    function isIOS() {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }
+
+    function updatePushCardState() {
+      const card = document.getElementById('pushBannerCard');
+      const text = document.getElementById('pushBannerText');
+      const btn = document.getElementById('pushBannerBtn');
+      if (!card || !text || !btn) return;
+
+      if (!('Notification' in window)) {
+        if (isIOS() && !isStandalonePWA()) {
+          text.innerHTML = '📲 <strong>iPhone:</strong> Toque em <b>Compartilhar</b> → <b>Adicionar à Tela de Início</b> e abra o app por lá para ativar notificações.';
+          btn.style.display = 'none';
+        } else {
+          text.textContent = 'Este navegador não suporta notificações push.';
+          btn.style.display = 'none';
+        }
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        text.innerHTML = '✅ <strong>Notificações ativas</strong> neste aparelho.';
+        btn.textContent = 'Testar / Reativar';
+      } else if (Notification.permission === 'denied') {
+        text.innerHTML = '⚠️ Notificações bloqueadas. Libere nas <b>Configurações do aparelho</b> para este app.';
+        btn.style.display = 'none';
+      }
+    }
+
+    async function requestOwnerPush() {
+      // No iOS, o Safari exige que o app esteja instalado na Tela de Início
+      if (isIOS() && !isStandalonePWA()) {
+        showToast("Instale na Tela de Início primeiro!");
+        alert("No iPhone, toque no botão Compartilhar (quadrado com seta) e depois em 'Adicionar à Tela de Início'. Abra o app pelo ícone criado para ativar os alertas.");
+        return;
+      }
+
+      if (!('Notification' in window)) {
+        showToast("Navegador sem suporte a notificações.");
+        return;
+      }
+
+      try {
+        // Dispara o prompt nativo diretamente no gesto do toque (obrigatório no iOS/Android PWA)
+        const permission = await Notification.requestPermission();
+
+        if (permission !== 'granted') {
+          showToast("Permissão negada nas configurações.");
+          updatePushCardState();
+          return;
+        }
+
+        OneSignalDeferred.push(async function(OneSignal) {
+          try {
+            await OneSignal.Notifications.requestPermission();
+            await OneSignal.User.PushSubscription.optIn();
+            await OneSignal.User.addTag("role", "owner");
+            updatePushCardState();
+            showToast("Notificações ativadas com sucesso!");
+          } catch (e) {
+            console.error(e);
+            showToast("Permissão concedida! Verifique o sw.js no servidor.");
+          }
+        });
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao pedir permissão de notificação.");
+      }
     }
   </script>
 
@@ -352,7 +428,7 @@
     <header>
       <div class="brand">
         <div class="brand-logo-wrap" title="KB Detail co.">
-          <img src="kaik.jpg" width="512" height="512" alt="KB Detail co." onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22[http://www.w3.org/2000/svg%22](http://www.w3.org/2000/svg%22) viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
+          <img src="kaik.jpg" width="512" height="512" alt="KB Detail co." onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
         </div>
         <div class="brand-text">
           <h1>KB Detail co. <span class="admin-pill">Dono</span></h1>
@@ -373,9 +449,9 @@
 
     <!-- TAB 1: DASHBOARD -->
     <section id="tab-dashboard" class="tab-view active">
-      <div class="push-card">
-        <span>🔔 Receba alerta no celular quando marcarem horário ou acabar produto.</span>
-        <button type="button" class="push-btn" onclick="requestOwnerPush()">Ativar Push</button>
+      <div class="push-card" id="pushBannerCard">
+        <span id="pushBannerText">🔔 Receba alerta no celular quando marcarem horário ou acabar produto.</span>
+        <button type="button" class="push-btn" id="pushBannerBtn" onclick="requestOwnerPush()">Ativar Push</button>
       </div>
 
       <div class="section-header">
@@ -516,10 +592,10 @@
   <div class="bottom-sheet" id="configSheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title">⚙️ URL do Google Apps Script</h3>
-    <p class="sheet-subtitle">Cole a URL /exec da sua implantação do Google Sheets para sincronizar faturamento, agenda e estoque.</p>
+    <p class="sheet-subtitle">A URL abaixo já está configurada. Altere apenas se criar uma nova implantação no Google Sheets.</p>
     <div class="form-group">
       <label>URL do Web App (.gs)</label>
-      <input type="url" id="scriptUrlInput" class="glass-input" placeholder="[https://script.google.com/macros/s/.../exec](https://script.google.com/macros/s/.../exec)">
+      <input type="url" id="scriptUrlInput" class="glass-input" placeholder="https://script.google.com/macros/s/.../exec">
     </div>
     <button class="full-btn" onclick="saveScriptUrl()">Salvar e Sincronizar</button>
   </div>
@@ -637,7 +713,7 @@
 
   <script>
     // =========================================================================
-    // COLE AQUI A URL DO SEU GOOGLE APPS SCRIPT (/exec):
+    // URL DO GOOGLE APPS SCRIPT (/exec):
     // =========================================================================
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMhC5Wln07eTRPw0oiZzXGQC1zBkqFsCQMwun9n8L0uydQlTFIf7XU4R-QBQTjbICowQ/exec";
 
@@ -649,15 +725,17 @@
       lastTouchEnd = now;
     }, { passive: false });
 
-    // PWA Manifest
+    // PWA Manifest dinâmico com caminho absoluto para funcionar ao salvar na Tela de Início
+    const baseHref = new URL('.', window.location.href).href;
     const manifestData = {
       name: "KB Detail co. — Gestão do Proprietário",
       short_name: "KB Admin",
-      start_url: ".",
+      start_url: window.location.href,
+      scope: baseHref,
       display: "standalone",
       background_color: "#07090e",
       theme_color: "#07090e",
-      icons: [{ src: "kaik.jpg", sizes: "512x512", type: "image/jpeg" }]
+      icons: [{ src: new URL('kaik.jpg', baseHref).href, sizes: "512x512", type: "image/jpeg" }]
     };
     document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(new Blob([JSON.stringify(manifestData)], { type: 'application/json' })));
 
@@ -665,8 +743,7 @@
     function getScriptUrl() {
       const saved = localStorage.getItem(KEY_SCRIPT_URL);
       if (saved && saved.startsWith("http")) return saved;
-      if (APPS_SCRIPT_URL && APPS_SCRIPT_URL.startsWith("http")) return APPS_SCRIPT_URL;
-      return "";
+      return APPS_SCRIPT_URL;
     }
 
     let ownerState = {
@@ -820,7 +897,7 @@
           <div class="booking-footer">
             <span class="booking-price">${formatBRL(b.Total)}</span>
             <div class="booking-btns">
-              <a href="[https://wa.me/55$](https://wa.me/55$){cleanPhone}?text=${wppMsg}" target="_blank" rel="noopener" class="sm-btn">WhatsApp</a>
+              <a href="https://wa.me/55${cleanPhone}?text=${wppMsg}" target="_blank" rel="noopener" class="sm-btn">WhatsApp</a>
               ${actionBtn}
             </div>
           </div>
@@ -1065,6 +1142,7 @@
     }
 
     // Boot
+    updatePushCardState();
     syncOwnerData();
   </script>
 </body>
