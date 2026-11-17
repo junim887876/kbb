@@ -7,15 +7,15 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KB Detail Admin">
-  <title>KB Detail adm</title>
+  <title>KB Detail co. — Painel do Proprietário</title>
   <link rel="manifest" id="pwa-manifest">
   <link rel="apple-touch-icon" href="kaik.jpg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+  <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+  <link href="[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap)" rel="stylesheet">
 
-  <!-- OneSignal SDK v16 (Owner Role) -->
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <!-- OneSignal SDK v16 (Somente no Painel do Dono) -->
+  <script src="[https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js](https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js)" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
@@ -31,7 +31,7 @@
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.Notifications.requestPermission();
         await OneSignal.User.addTag("role", "owner");
-        showToast("Notificações do proprietário ativadas!");
+        showToast("Notificações ativadas neste aparelho!");
       });
     }
   </script>
@@ -352,7 +352,7 @@
     <header>
       <div class="brand">
         <div class="brand-logo-wrap" title="KB Detail co.">
-          <img src="kaik.jpg" width="512" height="512" alt="KB Detail co." onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
+          <img src="kaik.jpg" width="512" height="512" alt="KB Detail co." onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22[http://www.w3.org/2000/svg%22](http://www.w3.org/2000/svg%22) viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
         </div>
         <div class="brand-text">
           <h1>KB Detail co. <span class="admin-pill">Dono</span></h1>
@@ -361,12 +361,10 @@
       </div>
 
       <div class="header-btns">
-        <!-- Botão Atualizar Planilha -->
         <button class="glass icon-btn" onclick="syncOwnerData()" title="Atualizar Dados">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
 
-        <!-- Engrenagem URL Apps Script -->
         <button class="glass icon-btn" onclick="openSheet('configSheet')" title="Configurar Planilha">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
@@ -375,7 +373,6 @@
 
     <!-- TAB 1: DASHBOARD -->
     <section id="tab-dashboard" class="tab-view active">
-      <!-- Push Notification Activation Card for Owner -->
       <div class="push-card">
         <span>🔔 Receba alerta no celular quando marcarem horário ou acabar produto.</span>
         <button type="button" class="push-btn" onclick="requestOwnerPush()">Ativar Push</button>
@@ -522,7 +519,7 @@
     <p class="sheet-subtitle">Cole a URL /exec da sua implantação do Google Sheets para sincronizar faturamento, agenda e estoque.</p>
     <div class="form-group">
       <label>URL do Web App (.gs)</label>
-      <input type="url" id="scriptUrlInput" class="glass-input" placeholder="https://script.google.com/macros/s/.../exec">
+      <input type="url" id="scriptUrlInput" class="glass-input" placeholder="[https://script.google.com/macros/s/.../exec](https://script.google.com/macros/s/.../exec)">
     </div>
     <button class="full-btn" onclick="saveScriptUrl()">Salvar e Sincronizar</button>
   </div>
@@ -639,6 +636,11 @@
   </div>
 
   <script>
+    // =========================================================================
+    // COLE AQUI A URL DO SEU GOOGLE APPS SCRIPT (/exec):
+    // =========================================================================
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMhC5Wln07eTRPw0oiZzXGQC1zBkqFsCQMwun9n8L0uydQlTFIf7XU4R-QBQTjbICowQ/exec";
+
     // Prevent Double-Tap Zoom
     let lastTouchEnd = 0;
     document.addEventListener('touchend', function (e) {
@@ -661,7 +663,10 @@
 
     const KEY_SCRIPT_URL = "kb_detail_gas_url";
     function getScriptUrl() {
-      return localStorage.getItem(KEY_SCRIPT_URL) || "";
+      const saved = localStorage.getItem(KEY_SCRIPT_URL);
+      if (saved && saved.startsWith("http")) return saved;
+      if (APPS_SCRIPT_URL && APPS_SCRIPT_URL.startsWith("http")) return APPS_SCRIPT_URL;
+      return "";
     }
 
     let ownerState = {
@@ -700,12 +705,17 @@
     async function apiPost(payload) {
       const url = getScriptUrl();
       if (!url) {
-        showToast('Configure a URL na engrenagem ⚙️ primeiro');
+        showToast('Configure a URL do Apps Script primeiro');
         return null;
       }
       try {
-        const res = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
-        return await res.json();
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        return { ok: true };
       } catch (err) {
         showToast('Erro de conexão com a planilha');
         return null;
@@ -716,7 +726,7 @@
       const url = getScriptUrl();
       const statusEl = document.getElementById('syncStatusText');
       if (!url) {
-        statusEl.textContent = 'Clique na engrenagem ⚙️ para conectar';
+        statusEl.textContent = 'Adicione a URL no código ou engrenagem ⚙️';
         renderAll();
         return;
       }
@@ -810,7 +820,7 @@
           <div class="booking-footer">
             <span class="booking-price">${formatBRL(b.Total)}</span>
             <div class="booking-btns">
-              <a href="https://wa.me/55${cleanPhone}?text=${wppMsg}" target="_blank" rel="noopener" class="sm-btn">WhatsApp</a>
+              <a href="[https://wa.me/55$](https://wa.me/55$){cleanPhone}?text=${wppMsg}" target="_blank" rel="noopener" class="sm-btn">WhatsApp</a>
               ${actionBtn}
             </div>
           </div>
@@ -1020,7 +1030,7 @@
       if (!title || !desc) return showToast('Preencha título e descrição');
 
       closeAllSheets();
-      await apiPost({ action: 'create_promo', title, desc, notifyClients: false });
+      await apiPost({ action: 'create_promo', title, desc });
       await syncOwnerData();
       showToast('Promoção criada!');
     }
