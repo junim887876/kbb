@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#07090e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="KB Detail co.">
-  <title>KB Detail co. — Estética Automotiva</title>
+  <meta name="apple-mobile-web-app-title" content="KB Detail Admin">
+  <title>KB Detail co. — Painel do Proprietário</title>
   <link rel="manifest" id="pwa-manifest">
   <link rel="apple-touch-icon" href="kaik.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,16 +17,19 @@
     :root {
       --bg-base: #07090e;
       --glass-bg: rgba(255, 255, 255, 0.06);
-      --glass-bg-elevated: rgba(24, 28, 38, 0.78);
+      --glass-bg-elevated: rgba(20, 25, 38, 0.85);
       --glass-border: rgba(255, 255, 255, 0.14);
       --glass-highlight: rgba(255, 255, 255, 0.25);
       --accent: #38bdf8;
       --accent-glow: rgba(56, 189, 248, 0.35);
       --accent-secondary: #818cf8;
+      --gold: #fbbf24;
+      --gold-glow: rgba(251, 191, 36, 0.28);
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
       --text-muted: #64748b;
       --success: #34d399;
+      --warning: #fb923c;
       --danger: #f87171;
       --safe-top: env(safe-area-inset-top, 20px);
       --safe-bottom: env(safe-area-inset-bottom, 20px);
@@ -64,14 +67,14 @@
     .orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(85px);
-      opacity: 0.45;
+      filter: blur(88px);
+      opacity: 0.42;
       animation: float 16s infinite alternate ease-in-out;
     }
 
     .orb-1 {
-      width: 300px;
-      height: 300px;
+      width: 310px;
+      height: 310px;
       background: radial-gradient(circle, #0284c7, transparent 70%);
       top: -60px;
       left: -80px;
@@ -106,7 +109,7 @@
       z-index: 1;
       max-width: 480px;
       margin: 0 auto;
-      padding: calc(var(--safe-top) + 12px) 16px calc(var(--safe-bottom) + 100px);
+      padding: calc(var(--safe-top) + 12px) 16px calc(var(--safe-bottom) + 96px);
     }
 
     /* Glass Card Utility */
@@ -118,12 +121,12 @@
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 var(--glass-highlight);
     }
 
-    /* Top Header */
+    /* Header */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .brand {
@@ -137,7 +140,7 @@
       height: 52px;
       border-radius: 15px;
       overflow: hidden;
-      border: 1.5px solid rgba(255, 255, 255, 0.28);
+      border: 1.5px solid rgba(56, 189, 248, 0.45);
       box-shadow: 0 4px 18px var(--accent-glow);
       flex-shrink: 0;
       background: #0d111a;
@@ -158,139 +161,72 @@
       font-size: 18px;
       font-weight: 800;
       letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .admin-pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(251, 191, 36, 0.18);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .brand-text p {
       font-size: 12px;
       color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-top: 2px;
     }
 
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
-    }
-
-    .install-btn {
-      display: none;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-primary);
-      cursor: pointer;
-    }
-
-    /* Hero Banner */
-    .hero-card {
-      border-radius: 24px;
-      padding: 20px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
-      border-radius: 99px;
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 10px;
-    }
-
-    .hero-card h2 {
-      font-size: 22px;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-    }
-
-    .hero-card p {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.45;
-    }
-
-    /* Quick Actions Bar (GPS, WhatsApp) */
-    .quick-grid {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .quick-btn {
-      border-radius: 20px;
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      text-decoration: none;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: transform 0.18s ease, background 0.18s ease;
-    }
-
-    .quick-btn:active {
-      transform: scale(0.96);
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .quick-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
+    .header-action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      color: var(--text-primary);
+      cursor: pointer;
+      position: relative;
     }
 
-    .icon-gps {
-      background: rgba(56, 189, 248, 0.18);
-      color: var(--accent);
-      border: 1px solid rgba(56, 189, 248, 0.3);
+    .notif-dot {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
     }
 
-    .icon-wpp {
-      background: rgba(52, 211, 153, 0.18);
-      color: var(--success);
-      border: 1px solid rgba(52, 211, 153, 0.3);
+    /* Tab Panels */
+    .tab-view {
+      display: none;
+      animation: fadeIn 0.22s ease;
     }
 
-    .quick-info strong {
+    .tab-view.active {
       display: block;
-      font-size: 13px;
-      font-weight: 700;
     }
 
-    .quick-info span {
-      display: block;
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-top: 1px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Section Headings */
     .section-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
+      align-items: center;
       margin-bottom: 12px;
       padding: 0 2px;
     }
@@ -301,451 +237,639 @@
       letter-spacing: -0.01em;
     }
 
-    .section-header span {
+    .section-header span, .section-link {
       font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    /* Vehicle Type Selector (Carro / Moto) */
-    .segmented-control {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-      padding: 5px;
-      border-radius: 18px;
-      margin-bottom: 22px;
-    }
-
-    .seg-btn {
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      padding: 11px 8px;
-      border-radius: 13px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .seg-btn small {
-      font-size: 11px;
-      font-weight: 500;
-      opacity: 0.78;
-    }
-
-    .seg-btn.active {
-      background: rgba(255, 255, 255, 0.14);
-      color: var(--text-primary);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    }
-
-    /* Services List */
-    .services-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-bottom: 26px;
-    }
-
-    .service-card {
-      border-radius: 24px;
-      padding: 18px;
-      transition: all 0.25s ease;
-      position: relative;
-      cursor: pointer;
-    }
-
-    .service-card.selected {
-      border-color: var(--accent);
-      background: linear-gradient(145deg, rgba(56, 189, 248, 0.14), rgba(255, 255, 255, 0.05));
-      box-shadow: 0 12px 32px rgba(2, 132, 199, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-
-    .service-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .service-title-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .service-title {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .tag-popular {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
-      color: #050811;
-      text-transform: uppercase;
-    }
-
-    .service-price {
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    .service-price strong {
-      display: block;
-      font-size: 19px;
-      font-weight: 800;
       color: var(--accent);
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
     }
 
-    .service-price span {
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    .service-desc {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.45;
+    /* KPI Revenue Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
       margin-bottom: 14px;
     }
 
-    .service-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+    .kpi-card {
+      border-radius: 22px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .btn-details {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-primary);
-      padding: 8px 12px;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 12px;
+    .kpi-card.highlight {
+      background: linear-gradient(145deg, rgba(56, 189, 248, 0.16), rgba(255, 255, 255, 0.04));
+      border-color: rgba(56, 189, 248, 0.32);
+    }
+
+    .kpi-label {
+      font-size: 11px;
       font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .kpi-trend {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--success);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      cursor: pointer;
+      gap: 4px;
     }
 
-    .btn-select {
-      background: rgba(56, 189, 248, 0.16);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--accent);
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .service-card.selected .btn-select {
-      background: var(--accent);
-      color: #06101d;
-      border-color: var(--accent);
-    }
-
-    /* Extras / Serviços Adicionais */
-    .extras-grid {
+    /* Mini Metrics Row */
+    .mini-stats {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 26px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
     }
 
-    .extra-card {
-      border-radius: 20px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .mini-box {
+      border-radius: 18px;
+      padding: 12px 10px;
+      text-align: center;
     }
 
-    .extra-card.active {
-      border-color: var(--accent);
-      background: rgba(56, 189, 248, 0.14);
-    }
-
-    .extra-info strong {
+    .mini-box strong {
       display: block;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 3px;
-    }
-
-    .extra-info span {
-      display: block;
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.35;
-    }
-
-    .extra-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .extra-price {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 800;
-      color: var(--accent);
-    }
-
-    .extra-info-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
       color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
     }
 
-    /* Scheduling Section (Weekend Only) */
-    .schedule-card {
+    .mini-box span {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* Weekly Revenue Bar Chart */
+    .chart-card {
       border-radius: 24px;
       padding: 18px;
       margin-bottom: 20px;
     }
 
-    .weekend-badge {
-      display: inline-flex;
+    .chart-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .chart-top h4 {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .chart-top p {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .goal-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 99px;
+      background: rgba(52, 211, 153, 0.14);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .bars-wrap {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      align-items: flex-end;
+      height: 118px;
+      padding-top: 10px;
+    }
+
+    .bar-col {
+      display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .bar-val {
+      font-size: 10px;
       font-weight: 700;
-      color: var(--accent);
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.28);
-      padding: 4px 10px;
-      border-radius: 99px;
-      margin-bottom: 14px;
+      color: var(--text-secondary);
     }
 
-    .days-row {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 18px;
-      scrollbar-width: none;
+    .bar-fill {
+      width: 100%;
+      max-width: 38px;
+      border-radius: 10px 10px 6px 6px;
+      background: linear-gradient(180deg, #38bdf8 0%, rgba(56, 189, 248, 0.25) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      transition: height 0.4s ease;
     }
 
-    .days-row::-webkit-scrollbar {
-      display: none;
+    .bar-col.current .bar-fill {
+      background: linear-gradient(180deg, #34d399 0%, rgba(52, 211, 153, 0.3) 100%);
+      border-color: var(--success);
+      box-shadow: 0 0 16px rgba(52, 211, 153, 0.3);
     }
 
-    .day-pill {
-      flex: 0 0 84px;
-      padding: 10px 8px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .day-pill.active {
-      background: var(--accent);
-      color: #06101d;
-      border-color: var(--accent);
-      box-shadow: 0 6px 18px var(--accent-glow);
-    }
-
-    .day-pill span {
-      display: block;
+    .bar-lbl {
       font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      opacity: 0.85;
+      font-weight: 600;
+      color: var(--text-secondary);
     }
 
-    .day-pill strong {
-      display: block;
-      font-size: 16px;
-      font-weight: 800;
-      margin-top: 2px;
-    }
-
-    .slots-grid {
+    /* Quick Owner Tools */
+    .owner-actions {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 22px;
     }
 
-    .slot-btn {
-      padding: 11px 6px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    .owner-btn {
+      border-radius: 18px;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       color: var(--text-primary);
       font-family: inherit;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      text-align: left;
     }
 
-    .slot-btn.busy {
-      opacity: 0.35;
-      text-decoration: line-through;
-      cursor: not-allowed;
-      background: rgba(248, 113, 113, 0.08);
-      border-color: rgba(248, 113, 113, 0.2);
+    .owner-btn:active {
+      transform: scale(0.97);
     }
 
-    .slot-btn.active {
-      background: var(--accent);
-      color: #06101d;
-      border-color: var(--accent);
-      box-shadow: 0 4px 16px var(--accent-glow);
-    }
-
-    .slot-legend {
+    .owner-btn-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
       display: flex;
-      gap: 14px;
-      margin-top: 14px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Filter Pills for Agenda */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+      scrollbar-width: none;
+    }
+
+    .filter-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-chip {
+      padding: 8px 14px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-chip.active {
+      background: var(--accent);
+      color: #05111e;
+      border-color: var(--accent);
+    }
+
+    /* Scheduled Client Cards */
+    .booking-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .booking-card {
+      border-radius: 22px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .booking-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .booking-time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 8px;
+    }
+
+    .status-agendado {
+      background: rgba(251, 191, 36, 0.16);
+      color: var(--gold);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .status-lavando {
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    .status-concluido {
+      background: rgba(52, 211, 153, 0.16);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .booking-client {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .booking-vehicle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .booking-services {
+      font-size: 12px;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 8px 11px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .booking-obs {
+      font-size: 12px;
+      color: var(--warning);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    .booking-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .booking-price {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--success);
+    }
+
+    .booking-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .sm-btn {
+      padding: 7px 11px;
+      border-radius: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sm-btn.primary {
+      background: var(--accent);
+      color: #05111e;
+      border-color: var(--accent);
+    }
+
+    .sm-btn.done {
+      background: rgba(52, 211, 153, 0.2);
+      color: var(--success);
+      border-color: rgba(52, 211, 153, 0.4);
+    }
+
+    /* Stock / Inventory Cards */
+    .stock-list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .stock-card {
+      border-radius: 20px;
+      padding: 15px 16px;
+    }
+
+    .stock-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .stock-name strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .stock-name span {
       font-size: 11px;
       color: var(--text-secondary);
     }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
+    .stock-alert {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 7px;
+      text-transform: uppercase;
     }
 
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
+    .alert-low {
+      background: rgba(248, 113, 113, 0.18);
+      color: var(--danger);
+      border: 1px solid rgba(248, 113, 113, 0.35);
     }
 
-    /* Location & Studio Card */
-    .location-card {
-      border-radius: 24px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .alert-ok {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.3);
     }
 
-    .loc-text strong {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 3px;
-    }
-
-    .loc-text p {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .gps-cta-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .gps-pill {
-      flex: 1;
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(56, 189, 248, 0.14);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--text-primary);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .gps-pill:active {
-      transform: scale(0.97);
-    }
-
-    /* Floating Bottom Dock */
-    .bottom-dock {
-      position: fixed;
-      bottom: calc(var(--safe-bottom) + 10px);
-      left: 16px;
-      right: 16px;
-      max-width: 448px;
-      margin: 0 auto;
-      border-radius: 24px;
-      padding: 12px 14px 12px 18px;
-      background: rgba(15, 20, 32, 0.88);
-      backdrop-filter: blur(28px) saturate(200%);
-      -webkit-backdrop-filter: blur(28px) saturate(200%);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    .stock-controls {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      z-index: 50;
     }
 
-    .dock-summary span {
+    .progress-track {
+      flex: 1;
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    .qty-stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 4px 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .step-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .qty-val {
+      font-size: 13px;
+      font-weight: 800;
+      min-width: 44px;
+      text-align: center;
+    }
+
+    /* Price Editor & Promotions & Coupons */
+    .price-card {
+      border-radius: 20px;
+      padding: 15px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .price-info strong {
       display: block;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .price-info span {
       font-size: 11px;
       color: var(--text-secondary);
     }
 
-    .dock-summary strong {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--text-primary);
+    .price-edit-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 6px 10px;
+      border-radius: 12px;
     }
 
-    .dock-btn {
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: #04101d;
+    .price-edit-box span {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .price-input {
+      width: 58px;
+      background: transparent;
       border: none;
-      border-radius: 16px;
-      padding: 13px 20px;
+      color: var(--text-primary);
       font-family: inherit;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 800;
+      text-align: right;
+      outline: none;
+    }
+
+    /* Promo & Coupon Cards */
+    .promo-card, .coupon-card {
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .promo-header, .coupon-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .coupon-code {
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: 9px;
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px dashed var(--accent);
+      color: var(--accent);
+    }
+
+    /* iOS Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
       cursor: pointer;
-      box-shadow: 0 6px 20px var(--accent-glow);
-      transition: transform 0.15s ease;
+      inset: 0;
+      background-color: rgba(255, 255, 255, 0.14);
+      transition: .25s;
+      border-radius: 34px;
     }
 
-    .dock-btn:active {
-      transform: scale(0.96);
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s;
+      border-radius: 50%;
     }
 
-    /* Apple Bottom Sheet Modal */
+    input:checked + .slider {
+      background-color: var(--success);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Bottom Navigation Dock */
+    .nav-dock {
+      position: fixed;
+      bottom: calc(var(--safe-bottom) + 10px);
+      left: 14px;
+      right: 14px;
+      max-width: 452px;
+      margin: 0 auto;
+      border-radius: 24px;
+      padding: 8px;
+      background: rgba(14, 19, 30, 0.9);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      z-index: 60;
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 8px 4px;
+      border-radius: 16px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item.active {
+      background: rgba(56, 189, 248, 0.16);
+      color: var(--accent);
+    }
+
+    /* Bottom Sheet Modals */
     .sheet-backdrop {
       position: fixed;
       inset: 0;
@@ -770,7 +894,7 @@
       bottom: 0;
       max-width: 480px;
       margin: 0 auto;
-      background: rgba(18, 22, 33, 0.96);
+      background: rgba(18, 22, 33, 0.97);
       backdrop-filter: blur(32px) saturate(200%);
       -webkit-backdrop-filter: blur(32px) saturate(200%);
       border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -792,67 +916,15 @@
       height: 5px;
       border-radius: 99px;
       background: rgba(255, 255, 255, 0.25);
-      margin: 0 auto 18px;
+      margin: 0 auto 16px;
     }
 
     .sheet-title {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 800;
-      margin-bottom: 6px;
+      margin-bottom: 14px;
     }
 
-    .sheet-subtitle {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 18px;
-      line-height: 1.45;
-    }
-
-    .step-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
-    .step-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .step-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 8px;
-      background: rgba(56, 189, 248, 0.2);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .step-list li div strong {
-      display: block;
-      font-size: 13px;
-      margin-bottom: 2px;
-    }
-
-    .step-list li div span {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.35;
-    }
-
-    /* Form Inputs inside Checkout Sheet */
     .form-group {
       margin-bottom: 12px;
     }
@@ -865,7 +937,7 @@
       margin-bottom: 5px;
     }
 
-    .glass-input {
+    .glass-input, .glass-select {
       width: 100%;
       padding: 12px 14px;
       border-radius: 14px;
@@ -873,49 +945,18 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--text-primary);
       font-family: inherit;
-      font-size: 16px; /* Prevents iOS auto-zoom on focus */
+      font-size: 16px;
       outline: none;
     }
 
-    .glass-input:focus {
-      border-color: var(--accent);
-      background: rgba(255, 255, 255, 0.09);
-    }
-
-    textarea.glass-input {
-      resize: none;
-      min-height: 74px;
-    }
-
-    .summary-box {
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 16px;
-      font-size: 13px;
-    }
-
-    .summary-line {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-      color: var(--text-secondary);
-    }
-
-    .summary-line.total {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-primary);
-      font-weight: 800;
-      font-size: 15px;
-      margin-bottom: 0;
+    .glass-select option {
+      background: #121621;
+      color: #f8fafc;
     }
 
     .full-btn {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
       border-radius: 16px;
       border: none;
       background: linear-gradient(135deg, #38bdf8, #0284c7);
@@ -924,104 +965,7 @@
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-    }
-
-    /* Confirmation Center Pop-up Modal */
-    .popup-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.9);
-      width: calc(100% - 36px);
-      max-width: 400px;
-      background: rgba(16, 21, 33, 0.96);
-      backdrop-filter: blur(32px) saturate(200%);
-      -webkit-backdrop-filter: blur(32px) saturate(200%);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
-      border-radius: 28px;
-      padding: 26px 22px;
-      text-align: center;
-      z-index: 150;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .popup-modal.open {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translate(-50%, -50%) scale(1);
-    }
-
-    .popup-check {
-      width: 64px;
-      height: 64px;
-      border-radius: 20px;
-      background: rgba(52, 211, 153, 0.16);
-      border: 1px solid rgba(52, 211, 153, 0.4);
-      color: var(--success);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      box-shadow: 0 8px 24px rgba(52, 211, 153, 0.25);
-    }
-
-    .popup-modal h3 {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      color: var(--text-primary);
-    }
-
-    .popup-modal p {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 18px;
-    }
-
-    .popup-gps-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 14px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: #05111e;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      box-shadow: 0 6px 20px var(--accent-glow);
-    }
-
-    .popup-close-btn {
-      width: 100%;
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* Logo Full Preview Modal */
-    .logo-preview-img {
-      width: 240px;
-      height: 240px;
-      border-radius: 28px;
-      object-fit: cover;
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      margin: 0 auto 14px;
-      display: block;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+      margin-top: 6px;
     }
 
     /* Toast */
@@ -1030,7 +974,7 @@
       top: calc(var(--safe-top) + 12px);
       left: 50%;
       transform: translate(-50%, -120px);
-      background: rgba(22, 28, 42, 0.95);
+      background: rgba(22, 28, 42, 0.96);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 12px 18px;
@@ -1059,649 +1003,817 @@
   <div id="toast" class="toast">Aviso</div>
 
   <main class="app-shell">
-    <!-- Header with 512x512 kaik.jpg Logo in Top-Left -->
+    <!-- Top Header with 512x512 kaik.jpg -->
     <header>
       <div class="brand">
-        <div class="brand-logo-wrap" onclick="openLogoModal()" title="KB Detail co.">
-          <img src="kaik.jpg" width="512" height="512" alt="Logo KB Detail co." onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
+        <div class="brand-logo-wrap" title="KB Detail co.">
+          <img src="kaik.jpg" width="512" height="512" alt="KB Detail co." onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
         </div>
         <div class="brand-text">
-          <h1>KB Detail co.</h1>
-          <p><span class="status-dot"></span> Sábado e Domingo • 08h às 18h</p>
+          <h1>KB Detail co. <span class="admin-pill">Dono</span></h1>
+          <p>Gestão • Faturamento & Agenda</p>
         </div>
       </div>
-      <button id="installBtn" class="glass install-btn">Instalar App</button>
+      <button class="glass header-action-btn" onclick="openNewBookingSheet()" title="Novo Agendamento Manual">
+        <span class="notif-dot"></span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </button>
     </header>
 
-    <!-- Hero -->
-    <section class="glass hero-card">
-      <div class="hero-badge">✦ Lavagem Detalhada & Cuidado</div>
-      <h2>Seu veículo sempre como novo!</h2>
-      <p>Brilho, proteção e cuidado em cada detalhe. Veja como funciona cada protocolo para Carro ou Moto e reserve seu horário de fim de semana.</p>
+    <!-- ==========================================
+         TAB 1: DASHBOARD (FATURAMENTO & RESUMO)
+         ========================================== -->
+    <section id="tab-dashboard" class="tab-view active">
+      <div class="section-header">
+        <h3>Faturamento</h3>
+        <span>Atualizado em tempo real</span>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="glass kpi-card highlight">
+          <div class="kpi-label">
+            <span>Semanal (Fim de Sem.)</span>
+            <span>📅</span>
+          </div>
+          <div class="kpi-value" id="weeklyRevenueVal">R$ 1.285,00</div>
+          <div class="kpi-trend">▲ +18% vs semana ant.</div>
+        </div>
+
+        <div class="glass kpi-card">
+          <div class="kpi-label">
+            <span>Mensal (Novembro)</span>
+            <span>💰</span>
+          </div>
+          <div class="kpi-value" id="monthlyRevenueVal">R$ 4.940,00</div>
+          <div class="kpi-trend">▲ 82% da meta</div>
+        </div>
+      </div>
+
+      <div class="mini-stats">
+        <div class="glass mini-box">
+          <strong id="statBookingsCount">12</strong>
+          <span>Agendados</span>
+        </div>
+        <div class="glass mini-box">
+          <strong id="statTicketAvg">R$ 107</strong>
+          <span>Ticket Médio</span>
+        </div>
+        <div class="glass mini-box">
+          <strong id="statLowStock" style="color: var(--danger);">2</strong>
+          <span>Estoque Baixo</span>
+        </div>
+      </div>
+
+      <!-- Weekly Performance Chart -->
+      <div class="glass chart-card">
+        <div class="chart-top">
+          <div>
+            <h4>Desempenho Semanal</h4>
+            <p>Faturamento Sábado + Domingo</p>
+          </div>
+          <span class="goal-pill">Meta R$ 6.000/mês</span>
+        </div>
+        <div class="bars-wrap">
+          <div class="bar-col">
+            <span class="bar-val">R$ 1.120</span>
+            <div class="bar-fill" style="height: 68%;"></div>
+            <span class="bar-lbl">Sem 1</span>
+          </div>
+          <div class="bar-col">
+            <span class="bar-val">R$ 1.350</span>
+            <div class="bar-fill" style="height: 82%;"></div>
+            <span class="bar-lbl">Sem 2</span>
+          </div>
+          <div class="bar-col">
+            <span class="bar-val">R$ 1.185</span>
+            <div class="bar-fill" style="height: 72%;"></div>
+            <span class="bar-lbl">Sem 3</span>
+          </div>
+          <div class="bar-col current">
+            <span class="bar-val" id="chartCurrentBarVal">R$ 1.285</span>
+            <div class="bar-fill" style="height: 78%;"></div>
+            <span class="bar-lbl">Atual</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Owner Shortcuts -->
+      <div class="section-header">
+        <h3>Atalhos Rápidos</h3>
+      </div>
+      <div class="owner-actions">
+        <button class="glass owner-btn" onclick="openNewBookingSheet()">
+          <div class="owner-btn-icon" style="background: rgba(56,189,248,0.18); color: var(--accent);">+</div>
+          <span>Encaixar Cliente</span>
+        </button>
+        <button class="glass owner-btn" onclick="switchTab('prices')">
+          <div class="owner-btn-icon" style="background: rgba(251,191,36,0.18); color: var(--gold);">%</div>
+          <span>Criar Cupom / Promo</span>
+        </button>
+        <button class="glass owner-btn" onclick="switchTab('stock')">
+          <div class="owner-btn-icon" style="background: rgba(248,113,113,0.18); color: var(--danger);">!</div>
+          <span>Repor Produtos</span>
+        </button>
+        <button class="glass owner-btn" onclick="openExpenseSheet()">
+          <div class="owner-btn-icon" style="background: rgba(52,211,153,0.18); color: var(--success);">R$</div>
+          <span>Lançar Despesa</span>
+        </button>
+      </div>
+
+      <!-- Next Scheduled Clients Preview -->
+      <div class="section-header">
+        <h3>Próximos Clientes</h3>
+        <button class="section-link" onclick="switchTab('agenda')">Ver agenda completa →</button>
+      </div>
+      <div class="booking-list" id="dashboardNextList"></div>
     </section>
 
-    <!-- Quick Action Buttons (GPS + WhatsApp Proprietário) -->
-    <section class="quick-grid">
-      <a href="https://maps.app.goo.gl/zR7tFD8TnctzGtNCA" target="_blank" rel="noopener" class="glass quick-btn">
-        <div class="quick-icon icon-gps">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
-        </div>
-        <div class="quick-info">
-          <strong>Como Chegar</strong>
-          <span>Abrir rota no GPS</span>
-        </div>
-      </a>
+    <!-- ==========================================
+         TAB 2: CLIENTES AGENDADOS (SÁBADO / DOMINGO)
+         ========================================== -->
+    <section id="tab-agenda" class="tab-view">
+      <div class="section-header">
+        <h3>Clientes Agendados</h3>
+        <button class="section-link" onclick="openNewBookingSheet()">+ Novo Horário</button>
+      </div>
 
-      <a href="https://wa.me/5562986276946?text=Ol%C3%A1%20KB%20Detail%20co.!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20a%20lavagem." target="_blank" rel="noopener" class="glass quick-btn">
-        <div class="quick-icon icon-wpp">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-          </svg>
-        </div>
-        <div class="quick-info">
-          <strong>Dúvidas</strong>
-          <span>(62) 98627-6946</span>
-        </div>
-      </a>
+      <div class="filter-row" id="agendaFilters">
+        <button class="filter-chip active" data-filter="todos">Todos</button>
+        <button class="filter-chip" data-filter="Sábado">Sábado</button>
+        <button class="filter-chip" data-filter="Domingo">Domingo</button>
+        <button class="filter-chip" data-filter="concluido">Concluídos</button>
+      </div>
+
+      <div class="booking-list" id="fullAgendaList"></div>
     </section>
 
-    <!-- Step 1: Vehicle Category (Carro / Moto) -->
-    <div class="section-header">
-      <h3>1. Tipo de Veículo</h3>
-      <span>Tabela oficial KB Detail co.</span>
-    </div>
-    <div class="glass segmented-control" id="vehicleSelector">
-      <button class="seg-btn active" data-type="carro">
-        🚗 Carro
-        <small>Lavagem Detalhada & Extras</small>
-      </button>
-      <button class="seg-btn" data-type="moto">
-        🏍️ Moto
-        <small>Lavagem Detalhada & Plásticos</small>
-      </button>
-    </div>
-
-    <!-- Step 2: Main Protocol -->
-    <div class="section-header">
-      <h3>2. Protocolo Principal</h3>
-      <span>Toque em "Como funciona"</span>
-    </div>
-    <div class="services-list" id="servicesContainer"></div>
-
-    <!-- Step 3: Additional Services (From Image) -->
-    <div class="section-header">
-      <h3>3. Serviços Adicionais</h3>
-      <span>Toque no "i" para detalhes</span>
-    </div>
-    <div class="extras-grid" id="extrasContainer"></div>
-
-    <!-- Step 4: Weekend Scheduling -->
-    <div class="section-header">
-      <h3>4. Agenda de Fim de Semana</h3>
-      <span id="selectedDateLabel">Sábado</span>
-    </div>
-    <section class="glass schedule-card">
-      <div class="weekend-badge">📅 Atendimento exclusivo Sábado e Domingo</div>
-      <div class="days-row" id="daysContainer"></div>
-      <div class="slots-grid" id="slotsContainer"></div>
-      <div class="slot-legend">
-        <div class="legend-item"><span class="dot" style="background: rgba(255,255,255,0.35)"></span> Disponível</div>
-        <div class="legend-item"><span class="dot" style="background: var(--accent)"></span> Selecionado</div>
-        <div class="legend-item"><span class="dot" style="background: var(--danger)"></span> Ocupado</div>
+    <!-- ==========================================
+         TAB 3: ESTOQUE DE PRODUTOS
+         ========================================== -->
+    <section id="tab-stock" class="tab-view">
+      <div class="section-header">
+        <h3>Estoque de Produtos</h3>
+        <button class="section-link" onclick="openNewProductSheet()">+ Novo Produto</button>
       </div>
+      <div class="stock-list" id="stockListContainer"></div>
     </section>
 
-    <!-- Location Card -->
-    <div class="section-header">
-      <h3>Localização</h3>
-      <span>Atendimento com hora marcada</span>
-    </div>
-    <section class="glass location-card">
-      <div class="loc-text">
-        <strong>KB Detail co. — Estética Automotiva</strong>
-        <p>Profissionalismo, atendimento de qualidade e seu veículo em boas mãos. Clique abaixo para abrir direto no GPS.</p>
+    <!-- ==========================================
+         TAB 4: PREÇOS, PROMOÇÕES & CUPONS
+         ========================================== -->
+    <section id="tab-prices" class="tab-view">
+      <div class="section-header">
+        <h3>Tabela de Preços</h3>
+        <button class="section-link" onclick="savePricesToast()">Salvar Tabela</button>
       </div>
-      <div class="gps-cta-group">
-        <a href="https://maps.app.goo.gl/zR7tFD8TnctzGtNCA" target="_blank" rel="noopener" class="gps-pill">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Abrir Localização no GPS
-        </a>
+      <div id="priceEditorContainer"></div>
+
+      <div class="section-header" style="margin-top: 22px;">
+        <h3>Promoções Ativas</h3>
+        <button class="section-link" onclick="openNewPromoSheet()">+ Nova Promoção</button>
       </div>
+      <div id="promosContainer"></div>
+
+      <div class="section-header" style="margin-top: 22px;">
+        <h3>Cupons de Desconto</h3>
+        <button class="section-link" onclick="openNewCouponSheet()">+ Criar Cupom</button>
+      </div>
+      <div id="couponsContainer"></div>
     </section>
   </main>
 
-  <!-- Floating Bottom Checkout Dock -->
-  <div class="bottom-dock">
-    <div class="dock-summary">
-      <span id="dockSubtitle">Lavagem Detalhada • Selecione horário</span>
-      <strong id="dockTotal">R$ 85,00</strong>
-    </div>
-    <button class="dock-btn" id="openCheckoutBtn">Agendar</button>
-  </div>
+  <!-- Bottom Navigation Bar -->
+  <nav class="nav-dock">
+    <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Painel
+    </button>
+    <button class="nav-item" data-tab="agenda" onclick="switchTab('agenda')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agenda
+    </button>
+    <button class="nav-item" data-tab="stock" onclick="switchTab('stock')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      Estoque
+    </button>
+    <button class="nav-item" data-tab="prices" onclick="switchTab('prices')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Preços
+    </button>
+  </nav>
 
   <!-- Modal Backdrop -->
-  <div class="sheet-backdrop" id="backdrop"></div>
+  <div class="sheet-backdrop" id="backdrop" onclick="closeAllSheets()"></div>
 
-  <!-- Sheet 1: How the Wash / Service Works -->
-  <div class="bottom-sheet" id="detailsSheet">
+  <!-- Sheet: Add Manual Booking -->
+  <div class="bottom-sheet" id="newBookingSheet">
     <div class="sheet-handle"></div>
-    <h3 class="sheet-title" id="detailTitle">Nome do Protocolo</h3>
-    <p class="sheet-subtitle" id="detailSubtitle">Descrição completa do protocolo.</p>
-    <ul class="step-list" id="detailSteps"></ul>
-    <button class="full-btn" id="selectFromDetailBtn">Entendi, Fechar</button>
+    <h3 class="sheet-title">Novo Agendamento Manual</h3>
+    <div class="form-group">
+      <label>Nome do Cliente</label>
+      <input type="text" id="nbName" class="glass-input" placeholder="Ex: Rafael Costa">
+    </div>
+    <div class="form-group">
+      <label>Telefone / WhatsApp</label>
+      <input type="tel" id="nbPhone" class="glass-input" placeholder="Ex: 6299887766">
+    </div>
+    <div class="form-group">
+      <label>Veículo (Carro ou Moto)</label>
+      <input type="text" id="nbVehicle" class="glass-input" placeholder="Ex: Civic Touring Cinza">
+    </div>
+    <div class="form-group">
+      <label>Dia e Horário (Fim de Semana)</label>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <select id="nbDay" class="glass-select">
+          <option value="Sábado">Sábado</option>
+          <option value="Domingo">Domingo</option>
+        </select>
+        <select id="nbTime" class="glass-select">
+          <option value="08:00">08:00</option>
+          <option value="09:30">09:30</option>
+          <option value="11:00">11:00</option>
+          <option value="13:30">13:30</option>
+          <option value="15:00">15:00</option>
+          <option value="16:30">16:30</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Serviço & Valor (R$)</label>
+      <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 8px;">
+        <input type="text" id="nbService" class="glass-input" value="Lavagem Detalhada Carro">
+        <input type="number" id="nbPrice" class="glass-input" value="85">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Observação</label>
+      <input type="text" id="nbObs" class="glass-input" placeholder="Ex: Revitalizar plásticos">
+    </div>
+    <button class="full-btn" onclick="createManualBooking()">Adicionar à Agenda</button>
   </div>
 
-  <!-- Sheet 2: Booking Form (Nome, Telefone, Carro/Moto, Observação) -->
-  <div class="bottom-sheet" id="checkoutSheet">
+  <!-- Sheet: Add New Product to Stock -->
+  <div class="bottom-sheet" id="newProductSheet">
     <div class="sheet-handle"></div>
-    <h3 class="sheet-title">Agendar na KB Detail co.</h3>
-    <p class="sheet-subtitle">Preencha seus dados abaixo para confirmar a reserva do seu horário.</p>
-
-    <div class="summary-box" id="checkoutSummary"></div>
-
+    <h3 class="sheet-title">Cadastrar Produto no Estoque</h3>
     <div class="form-group">
-      <label for="clientName">Seu Nome *</label>
-      <input type="text" id="clientName" class="glass-input" placeholder="Ex: João Silva" autocomplete="name">
+      <label>Nome do Produto</label>
+      <input type="text" id="npName" class="glass-input" placeholder="Ex: Snow Foam V-Floc 5L">
     </div>
-
     <div class="form-group">
-      <label for="clientPhone">Seu Telefone / WhatsApp *</label>
-      <input type="tel" id="clientPhone" class="glass-input" placeholder="Ex: (62) 99999-9999" autocomplete="tel">
+      <label>Categoria</label>
+      <input type="text" id="npCat" class="glass-input" placeholder="Ex: Shampoo / Proteção / Plásticos">
     </div>
-
-    <div class="form-group">
-      <label for="carModel">Qual o Carro ou Moto? *</label>
-      <input type="text" id="carModel" class="glass-input" placeholder="Ex: Golf GTI Preto / Hornet 600">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+      <div class="form-group">
+        <label>Qtd Atual</label>
+        <input type="number" id="npQty" class="glass-input" value="5">
+      </div>
+      <div class="form-group">
+        <label>Estoque Mínimo</label>
+        <input type="number" id="npMin" class="glass-input" value="2">
+      </div>
     </div>
-
-    <div class="form-group">
-      <label for="washNotes">Observação da Lavagem (Opcional)</label>
-      <textarea id="washNotes" class="glass-input" placeholder="Ex: Atenção extra nas rodas, banco de couro, sujeira pesada..."></textarea>
-    </div>
-
-    <button class="full-btn" id="confirmBookingBtn">Enviar e Confirmar Horário</button>
+    <button class="full-btn" onclick="createProduct()">Salvar no Estoque</button>
   </div>
 
-  <!-- Center Pop-up: Booking Received Confirmation + GPS Icon -->
-  <div class="popup-modal" id="successPopup">
-    <div class="popup-check">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
+  <!-- Sheet: Add New Promotion -->
+  <div class="bottom-sheet" id="newPromoSheet">
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">Criar Nova Promoção</h3>
+    <div class="form-group">
+      <label>Título da Promoção</label>
+      <input type="text" id="prTitle" class="glass-input" placeholder="Ex: Combo Brilho Total">
     </div>
-    <h3>Horário Recebido e Marcado!</h3>
-    <p id="popupMessage">A empresa <strong>KB Detail co.</strong> recebeu o seu horário e ele já está marcado. Clique no ícone de GPS abaixo para traçar sua rota até nós.</p>
-
-    <a href="https://maps.app.goo.gl/zR7tFD8TnctzGtNCA" target="_blank" rel="noopener" class="popup-gps-btn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-      </svg>
-      Abrir Localização no GPS
-    </a>
-
-    <button type="button" class="popup-close-btn" id="closePopupBtn">Concluir</button>
+    <div class="form-group">
+      <label>Descrição / Regra</label>
+      <input type="text" id="prDesc" class="glass-input" placeholder="Ex: Lavagem Detalhada + Cristalização por R$ 105">
+    </div>
+    <button class="full-btn" onclick="createPromo()">Ativar Promoção</button>
   </div>
 
-  <!-- Center Pop-up: Logo Preview 512x512 -->
-  <div class="popup-modal" id="logoPopup">
-    <img src="kaik.jpg" width="512" height="512" alt="KB Detail co." class="logo-preview-img" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
-    <h3>KB Detail co.</h3>
-    <p>Estética Automotiva • Lavagem Detalhada de Carros e Motos.</p>
-    <button type="button" class="popup-close-btn" onclick="closeAllModals()">Fechar</button>
+  <!-- Sheet: Add New Coupon -->
+  <div class="bottom-sheet" id="newCouponSheet">
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">Criar Cupom de Desconto</h3>
+    <div class="form-group">
+      <label>Código do Cupom</label>
+      <input type="text" id="cpCode" class="glass-input" placeholder="Ex: KBDETAIL15" style="text-transform: uppercase;">
+    </div>
+    <div class="form-group">
+      <label>Desconto (%)</label>
+      <input type="number" id="cpPercent" class="glass-input" value="10">
+    </div>
+    <button class="full-btn" onclick="createCoupon()">Gerar Cupom</button>
+  </div>
+
+  <!-- Sheet: Register Expense -->
+  <div class="bottom-sheet" id="expenseSheet">
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">Lançar Despesa / Compra</h3>
+    <div class="form-group">
+      <label>Descrição</label>
+      <input type="text" id="exDesc" class="glass-input" placeholder="Ex: Reposição Vonixx / Microfibras">
+    </div>
+    <div class="form-group">
+      <label>Valor (R$)</label>
+      <input type="number" id="exVal" class="glass-input" placeholder="120">
+    </div>
+    <button class="full-btn" onclick="registerExpense()">Abater do Caixa</button>
   </div>
 
   <script>
-    // 1. Prevent Double-Tap Zoom & Pinch Zoom
+    // 1. Prevent Double-Tap Zoom
     let lastTouchEnd = 0;
     document.addEventListener('touchend', function (event) {
       const now = Date.now();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
+      if (now - lastTouchEnd <= 300) event.preventDefault();
       lastTouchEnd = now;
     }, { passive: false });
 
-    document.addEventListener('gesturestart', function (e) {
-      e.preventDefault();
-    });
-
-    // 2. Dynamic PWA Manifest & Service Worker using kaik.jpg
+    // 2. Dynamic PWA Manifest
     const manifestData = {
-      name: "KB Detail co. — Estética Automotiva",
-      short_name: "KB Detail co.",
+      name: "KB Detail co. — Gestão do Proprietário",
+      short_name: "KB Admin",
       start_url: ".",
       display: "standalone",
       background_color: "#07090e",
       theme_color: "#07090e",
-      orientation: "portrait",
-      icons: [{
-        src: "kaik.jpg",
-        sizes: "512x512",
-        type: "image/jpeg",
-        purpose: "any maskable"
-      }]
+      icons: [{ src: "kaik.jpg", sizes: "512x512", type: "image/jpeg" }]
     };
     const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
     document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(manifestBlob));
 
-    if ('serviceWorker' in navigator) {
-      const swCode = `
-        self.addEventListener('install', e => self.skipWaiting());
-        self.addEventListener('activate', e => self.clients.claim());
-        self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
-      `;
-      const swBlob = new Blob([swCode], { type: 'application/javascript' });
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
-    }
-
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'block';
-    });
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    });
-
-    // 3. Protocols Data (Strictly matching the KB Detail co. image)
-    const CATALOG = {
-      carro: {
-        main: {
-          id: 'carro_detalhada',
-          name: 'Lavagem Detalhada — Carro',
-          price: 85,
-          duration: '1h 30min',
-          shortDesc: 'Pré-lavagem Snow Foam, detalhamento de rodas, limpeza interna completa e proteção de pintura.',
-          fullIntro: 'Protocolo exclusivo KB Detail co. para carros. Remove toda a sujeira sem causar micro-riscos e devolve o aspecto de carro novo.',
-          steps: [
-            { title: 'Pré-Lavagem com Snow Foam', desc: 'Aplicação de espuma densa de pH neutro que desprende barro, poeira e fuligem sem atrito na lataria.' },
-            { title: 'Detalhamento de Rodas, Pinças e Caixas', desc: 'Limpeza minuciosa com pincéis de cerdas macias nas rodas, parafusos, caixas de roda e pneus.' },
-            { title: 'Esfregação Técnica & Cantos', desc: 'Lavagem segura com luva de microfibra, detalhamento de grades, emblemas, retrovisores e batentes de porta.' },
-            { title: 'Aspiração & Acabamento Interno', desc: 'Aspiração completa de bancos e carpetes, limpeza técnica do painel, hidratação de pneus e brilho final.' }
-          ]
+    // 3. Simulated Owner Data (No Database)
+    let ownerState = {
+      weeklyRevenue: 1285,
+      monthlyRevenue: 4940,
+      agendaFilter: 'todos',
+      bookings: [
+        {
+          id: 1,
+          client: 'Matheus Oliveira',
+          phone: '62991234567',
+          vehicle: 'VW Golf GTI Preto',
+          day: 'Sábado',
+          time: '08:00',
+          services: 'Lavagem Detalhada Carro + Cristalização de Vidros',
+          obs: 'Cuidado extra nas rodas diamantadas.',
+          total: 115,
+          status: 'concluido'
         },
-        extras: [
-          {
-            id: 'carro_plasticos',
-            name: 'Revitalização de Plásticos Externos',
-            price: 30,
-            shortDesc: 'Restaura a cor original e protege contra raios UV.',
-            fullIntro: 'Tratamento restaurador para para-choques, molduras, churrasqueira do para-brisa e frisos externos ressecados.',
-            steps: [
-              { title: 'Limpeza Desengraxante', desc: 'Remoção de ceras antigas, gorduras e resíduos impregnados nos poros do plástico.' },
-              { title: 'Aplicação de Revitalizador UV', desc: 'Condicionamento profundo com acabamento acetinado seco ao toque, que não sai na primeira chuva.' }
-            ]
-          },
-          {
-            id: 'carro_vidros',
-            name: 'Cristalização de Vidros',
-            price: 30,
-            shortDesc: 'Repelência de água e máxima visibilidade na chuva.',
-            fullIntro: 'Cria uma película hidrorrepelente no para-brisa e vidros, fazendo as gotas de chuva deslizarem com o vento.',
-            steps: [
-              { title: 'Descontaminação do Vidro', desc: 'Remoção de marcas d’água leves e oleosidade acumulada da estrada.' },
-              { title: 'Selante Hidrorrepelente', desc: 'Aplicação e lustro do cristalizador para aumentar a segurança e visibilidade dirigindo sob chuva.' }
-            ]
-          },
-          {
-            id: 'carro_motor',
-            name: 'Lavagem de Motor',
-            price: 40,
-            shortDesc: 'Limpeza técnica segura do cofre e proteção de mangueiras.',
-            fullIntro: 'Limpeza detalhada do cofre do motor sem uso de jatos agressivos em módulos eletrônicos.',
-            steps: [
-              { title: 'Proteção de Componentes Sensíveis', desc: 'Isolamento preventivo de alternador, central eletrônica e sensores antes da limpeza.' },
-              { title: 'Pincelamento & Verniz de Motor', desc: 'Remoção de graxa e poeira com produtos biodegradáveis e aplicação de protetor térmico nos plásticos e mangueiras.' }
-            ]
-          }
-        ]
-      },
-      moto: {
-        main: {
-          id: 'moto_detalhada',
-          name: 'Lavagem Detalhada — Moto',
-          price: 65,
-          duration: '1h 15min',
-          shortDesc: 'Limpeza minuciosa de carenagens, motor, escapamento, rodas, raios e lubrificação.',
-          fullIntro: 'Cuidado extremo em cada parafuso e componente exposto da sua motocicleta, respeitando partes elétricas e pintura.',
-          steps: [
-            { title: 'Pré-Lavagem & Desengraxe Seguro', desc: 'Espuma ativa de pH neutro nas carenagens e desengraxe controlado na relação, balança e motor.' },
-            { title: 'Detalhamento com Pincéis Finos', desc: 'Limpeza profunda de aletas do motor, pinças de freio, raios, cubo de roda, painel e comandos.' },
-            { title: 'Secagem com Microfibra & Soprador', desc: 'Remoção total da água em parafusos e frestas para evitar oxidação e manchas.' },
-            { title: 'Proteção de Pintura & Relação', desc: 'Aplicação de cera protetora nas carenagens e acabamento impecável para rodar brilhando.' }
-          ]
+        {
+          id: 2,
+          client: 'Camila Ferreira',
+          phone: '62994558811',
+          vehicle: 'Jeep Compass Branco',
+          day: 'Sábado',
+          time: '09:30',
+          services: 'Lavagem Detalhada Carro + Revitalização de Plásticos',
+          obs: 'Plásticos externos bem ressecados.',
+          total: 115,
+          status: 'lavando'
         },
-        extras: [
-          {
-            id: 'moto_plasticos',
-            name: 'Revitalização de Plásticos',
-            price: 20,
-            shortDesc: 'Devolve o preto intenso e protege contra o sol.',
-            fullIntro: 'Ideal para para-lamas, rabeta, painel, punhos e partes plásticas expostas constantemente ao sol.',
-            steps: [
-              { title: 'Descontaminação da Superfície', desc: 'Limpeza profunda para abrir os poros do plástico e remover poeira incrustada.' },
-              { title: 'Proteção UV Seca ao Toque', desc: 'Aplicação de revitalizador que devolve o aspecto de fábrica sem deixar escorregadio.' }
-            ]
-          }
-        ]
-      }
-    };
-
-    // 4. App State
-    let state = {
-      vehicleType: 'carro',
-      extras: new Set(),
-      selectedDayIndex: 0,
-      selectedSlot: null
-    };
-
-    // Generate ONLY Saturdays and Sundays (Next 6 weekend days)
-    const WEEKEND_DAYS = [];
-    const baseSlots = ['08:00', '09:30', '11:00', '13:30', '15:00', '16:30'];
-
-    let checkDate = new Date();
-    while (WEEKEND_DAYS.length < 6) {
-      const dow = checkDate.getDay(); // 0 = Domingo, 6 = Sábado
-      if (dow === 6 || dow === 0) {
-        const isToday = checkDate.toDateString() === new Date().toDateString();
-        const dayName = dow === 6 ? 'Sábado' : 'Domingo';
-        const dayNum = String(checkDate.getDate()).padStart(2, '0');
-        const monthNum = String(checkDate.getMonth() + 1).padStart(2, '0');
-        const idx = WEEKEND_DAYS.length;
-
-        // Realistic busy slots example
-        const busySet = new Set();
-        if (idx === 0) {
-          busySet.add('09:30');
-          busySet.add('15:00');
-        } else if (idx === 1) {
-          busySet.add('11:00');
+        {
+          id: 3,
+          client: 'Gabriel Santos',
+          phone: '62984129900',
+          vehicle: 'BMW S1000RR',
+          day: 'Sábado',
+          time: '11:00',
+          services: 'Lavagem Detalhada Moto + Revitalização de Plásticos',
+          obs: 'Não bater jato forte no painel.',
+          total: 85,
+          status: 'agendado'
+        },
+        {
+          id: 4,
+          client: 'Rodrigo Almeida',
+          phone: '62981223344',
+          vehicle: 'Honda Civic Touring Prata',
+          day: 'Sábado',
+          time: '14:00',
+          services: 'Lavagem Detalhada Carro + Lavagem de Motor',
+          obs: 'Motor com poeira de estrada de terra.',
+          total: 125,
+          status: 'agendado'
+        },
+        {
+          id: 5,
+          client: 'Felipe Nogueira',
+          phone: '62996332211',
+          vehicle: 'Yamaha MT-07 Azul',
+          day: 'Domingo',
+          time: '09:30',
+          services: 'Lavagem Detalhada Moto',
+          obs: '',
+          total: 65,
+          status: 'agendado'
+        },
+        {
+          id: 6,
+          client: 'Bruna Mendes',
+          phone: '62992776655',
+          vehicle: 'Toyota Corolla Cross',
+          day: 'Domingo',
+          time: '11:00',
+          services: 'Lavagem Detalhada Carro + Cristalização de Vidros',
+          obs: 'Viagem marcada para segunda.',
+          total: 115,
+          status: 'agendado'
         }
+      ],
+      stock: [
+        { id: 1, name: 'Shampoo Snow Foam V-Floc (5L)', cat: 'Pré-Lavagem', qty: 2, min: 2, max: 6, unit: 'galões' },
+        { id: 2, name: 'Revitalizador Restaurax (500ml)', cat: 'Plásticos', qty: 1, min: 2, max: 6, unit: 'frascos' },
+        { id: 3, name: 'Cristalizador Glaco / Vidros', cat: 'Vidros', qty: 4, min: 2, max: 6, unit: 'frascos' },
+        { id: 4, name: 'Desengraxante Motor & Chassi (5L)', cat: 'Motor', qty: 3, min: 2, max: 5, unit: 'galões' },
+        { id: 5, name: 'Panos de Microfibra 400GSM', cat: 'Acessórios', qty: 14, min: 10, max: 25, unit: 'unid.' },
+        { id: 6, name: 'Pretinho Selante Pneus (1.5L)', cat: 'Acabamento', qty: 1, min: 2, max: 5, unit: 'frascos' }
+      ],
+      prices: [
+        { id: 'c_lav', name: 'Lavagem Detalhada — Carro', cat: 'Carro', price: 85 },
+        { id: 'c_pla', name: 'Revitalização de Plásticos Externos', cat: 'Carro', price: 30 },
+        { id: 'c_vid', name: 'Cristalização de Vidros', cat: 'Carro', price: 30 },
+        { id: 'c_mot', name: 'Lavagem de Motor', cat: 'Carro', price: 40 },
+        { id: 'm_lav', name: 'Lavagem Detalhada — Moto', cat: 'Moto', price: 65 },
+        { id: 'm_pla', name: 'Revitalização de Plásticos', cat: 'Moto', price: 20 }
+      ],
+      promos: [
+        { id: 1, title: 'Combo Proteção Total (Carro)', desc: 'Lavagem Detalhada + Plásticos + Vidros de R$ 145 por R$ 125', active: true },
+        { id: 2, title: 'Moto Zero Bala', desc: 'Lavagem Detalhada Moto + Revitalização de Plásticos por R$ 75', active: true }
+      ],
+      coupons: [
+        { id: 1, code: 'KBDETAIL10', percent: 10, uses: 14, active: true },
+        { id: 2, code: 'PRIMEIRAVEZ', percent: 15, uses: 9, active: true }
+      ]
+    };
 
-        WEEKEND_DAYS.push({
-          label: isToday ? `Hoje (${dayName.slice(0,3)})` : dayName,
-          fullTitle: `${dayName} (${dayNum}/${monthNum})`,
-          dateStr: `${dayNum}/${monthNum}`,
-          slots: baseSlots.map(time => ({ time, busy: busySet.has(time) }))
-        });
+    function formatBRL(v) {
+      return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // Navigation Tabs
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Render KPIs & Dashboard
+    function renderDashboard() {
+      document.getElementById('weeklyRevenueVal').textContent = formatBRL(ownerState.weeklyRevenue);
+      document.getElementById('monthlyRevenueVal').textContent = formatBRL(ownerState.monthlyRevenue);
+      document.getElementById('chartCurrentBarVal').textContent = formatBRL(ownerState.weeklyRevenue).replace(',00', '');
+
+      const totalBookings = ownerState.bookings.length;
+      const sumTotal = ownerState.bookings.reduce((acc, b) => acc + b.total, 0);
+      const avg = totalBookings ? Math.round(sumTotal / totalBookings) : 0;
+      const lowStockCount = ownerState.stock.filter(s => s.qty <= s.min).length;
+
+      document.getElementById('statBookingsCount').textContent = totalBookings;
+      document.getElementById('statTicketAvg').textContent = `R$ ${avg}`;
+      document.getElementById('statLowStock').textContent = lowStockCount;
+
+      const upcoming = ownerState.bookings.filter(b => b.status !== 'concluido').slice(0, 3);
+      document.getElementById('dashboardNextList').innerHTML = upcoming.map(renderBookingCard).join('');
+    }
+
+    // Render Booking Card HTML
+    function renderBookingCard(b) {
+      const statusLabels = {
+        agendado: { text: 'Agendado', cls: 'status-agendado' },
+        lavando: { text: 'No Box Agora', cls: 'status-lavando' },
+        concluido: { text: 'Concluído', cls: 'status-concluido' }
+      };
+      const st = statusLabels[b.status];
+
+      let actionBtn = '';
+      if (b.status === 'agendado') {
+        actionBtn = `<button class="sm-btn primary" onclick="advanceBookingStatus(${b.id}, 'lavando')">Iniciar Box</button>`;
+      } else if (b.status === 'lavando') {
+        actionBtn = `<button class="sm-btn done" onclick="advanceBookingStatus(${b.id}, 'concluido')">✓ Finalizar</button>`;
       }
-      checkDate.setDate(checkDate.getDate() + 1);
-    }
 
-    // 5. Formatting & Rendering
-    function formatBRL(val) {
-      return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    }
+      const wppText = encodeURIComponent(`Olá ${b.client}! Aqui é da KB Detail co. Confirmando seu horário de ${b.day} às ${b.time} para o veículo ${b.vehicle}.`);
 
-    function renderMainService() {
-      const srv = CATALOG[state.vehicleType].main;
-      const container = document.getElementById('servicesContainer');
-      container.innerHTML = `
-        <article class="glass service-card selected">
-          <div class="service-top">
-            <div class="service-title-wrap">
-              <h4 class="service-title">${srv.name}</h4>
-              <span class="tag-popular">Incluso</span>
-            </div>
-            <div class="service-price">
-              <strong>${formatBRL(srv.price)}</strong>
-              <span>⏱ ${srv.duration}</span>
-            </div>
+      return `
+        <article class="glass booking-card">
+          <div class="booking-top">
+            <span class="booking-time-badge">📅 ${b.day} • ${b.time}</span>
+            <span class="status-badge ${st.cls}">${st.text}</span>
           </div>
-          <p class="service-desc">${srv.shortDesc}</p>
-          <div class="service-footer">
-            <button type="button" class="btn-details" onclick="openServiceDetails('main')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              Como funciona
-            </button>
-            <span class="btn-select">✓ Selecionado</span>
+          <div class="booking-client">${b.client}</div>
+          <div class="booking-vehicle">🚘 ${b.vehicle} • 📞 ${b.phone}</div>
+          <div class="booking-services">${b.services}</div>
+          ${b.obs ? `<div class="booking-obs">Obs: "${b.obs}"</div>` : ''}
+          <div class="booking-footer">
+            <span class="booking-price">${formatBRL(b.total)}</span>
+            <div class="booking-btns">
+              <a href="https://wa.me/55${b.phone.replace(/\D/g,'')}?text=${wppText}" target="_blank" rel="noopener" class="sm-btn">WhatsApp</a>
+              ${actionBtn}
+            </div>
           </div>
         </article>
       `;
     }
 
-    function renderExtras() {
-      const extras = CATALOG[state.vehicleType].extras;
-      const container = document.getElementById('extrasContainer');
-      container.innerHTML = extras.map(ext => {
-        const active = state.extras.has(ext.id);
+    function renderAgenda() {
+      let list = ownerState.bookings;
+      if (ownerState.agendaFilter === 'Sábado' || ownerState.agendaFilter === 'Domingo') {
+        list = list.filter(b => b.day === ownerState.agendaFilter);
+      } else if (ownerState.agendaFilter === 'concluido') {
+        list = list.filter(b => b.status === 'concluido');
+      }
+      document.getElementById('fullAgendaList').innerHTML = list.length
+        ? list.map(renderBookingCard).join('')
+        : `<p style="text-align:center; color:var(--text-secondary); padding:30px 0; font-size:13px;">Nenhum agendamento neste filtro.</p>`;
+    }
+
+    function advanceBookingStatus(id, nextStatus) {
+      const b = ownerState.bookings.find(item => item.id === id);
+      if (!b) return;
+      b.status = nextStatus;
+
+      if (nextStatus === 'concluido') {
+        ownerState.weeklyRevenue += b.total;
+        ownerState.monthlyRevenue += b.total;
+        showToast(`Serviço concluído! +${formatBRL(b.total)} no faturamento.`);
+      } else {
+        showToast(`${b.vehicle} entrou no box de lavagem!`);
+      }
+      renderDashboard();
+      renderAgenda();
+    }
+
+    document.querySelectorAll('#agendaFilters .filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#agendaFilters .filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        ownerState.agendaFilter = chip.dataset.filter;
+        renderAgenda();
+      });
+    });
+
+    // Render Stock
+    function renderStock() {
+      const container = document.getElementById('stockListContainer');
+      container.innerHTML = ownerState.stock.map(item => {
+        const isLow = item.qty <= item.min;
+        const pct = Math.min(100, Math.round((item.qty / item.max) * 100));
+        const barColor = isLow ? 'var(--danger)' : 'var(--success)';
+
         return `
-          <div class="glass extra-card ${active ? 'active' : ''}" onclick="toggleExtra('${ext.id}')">
-            <div class="extra-info">
-              <strong>${active ? '✓ ' : '+ '}${ext.name}</strong>
-              <span>${ext.shortDesc}</span>
+          <div class="glass stock-card">
+            <div class="stock-top">
+              <div class="stock-name">
+                <strong>${item.name}</strong>
+                <span>${item.cat} • Mínimo: ${item.min} ${item.unit}</span>
+              </div>
+              <span class="stock-alert ${isLow ? 'alert-low' : 'alert-ok'}">
+                ${isLow ? 'Repor Urgente' : 'Estoque OK'}
+              </span>
             </div>
-            <div class="extra-right">
-              <span class="extra-price">+ ${formatBRL(ext.price)}</span>
-              <button type="button" class="extra-info-btn" title="Como funciona" onclick="event.stopPropagation(); openServiceDetails('${ext.id}')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              </button>
+            <div class="stock-controls">
+              <div class="progress-track">
+                <div class="progress-fill" style="width:${pct}%; background:${barColor};"></div>
+              </div>
+              <div class="qty-stepper">
+                <button class="step-btn" onclick="changeStock(${item.id}, -1)">−</button>
+                <span class="qty-val">${item.qty} ${item.unit}</span>
+                <button class="step-btn" onclick="changeStock(${item.id}, 1)">+</button>
+              </div>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    function renderDays() {
-      const container = document.getElementById('daysContainer');
-      container.innerHTML = WEEKEND_DAYS.map((d, idx) => `
-        <div class="day-pill ${state.selectedDayIndex === idx ? 'active' : ''}" onclick="selectDay(${idx})">
-          <span>${d.label}</span>
-          <strong>${d.dateStr}</strong>
+    function changeStock(id, delta) {
+      const item = ownerState.stock.find(s => s.id === id);
+      if (!item) return;
+      item.qty = Math.max(0, item.qty + delta);
+      renderStock();
+      renderDashboard();
+    }
+
+    // Render Prices, Promos & Coupons
+    function renderPricesAndPromos() {
+      document.getElementById('priceEditorContainer').innerHTML = ownerState.prices.map(p => `
+        <div class="glass price-card">
+          <div class="price-info">
+            <strong>${p.name}</strong>
+            <span>Categoria: ${p.cat}</span>
+          </div>
+          <div class="price-edit-box">
+            <span>R$</span>
+            <input type="number" class="price-input" value="${p.price}" onchange="updatePrice('${p.id}', this.value)">
+          </div>
         </div>
       `).join('');
 
-      const activeDay = WEEKEND_DAYS[state.selectedDayIndex];
-      document.getElementById('selectedDateLabel').textContent = activeDay.fullTitle;
-    }
-
-    function renderSlots() {
-      const container = document.getElementById('slotsContainer');
-      const day = WEEKEND_DAYS[state.selectedDayIndex];
-      container.innerHTML = day.slots.map(s => {
-        const isActive = state.selectedSlot === s.time && !s.busy;
-        return `
-          <button type="button"
-            class="slot-btn ${s.busy ? 'busy' : ''} ${isActive ? 'active' : ''}"
-            ${s.busy ? 'disabled' : `onclick="selectSlot('${s.time}')"`}>
-            ${s.time}
-          </button>
-        `;
-      }).join('');
-    }
-
-    function calculateTotal() {
-      const cat = CATALOG[state.vehicleType];
-      let total = cat.main.price;
-      state.extras.forEach(id => {
-        const found = cat.extras.find(e => e.id === id);
-        if (found) total += found.price;
-      });
-      return total;
-    }
-
-    function updateDock() {
-      const total = calculateTotal();
-      const day = WEEKEND_DAYS[state.selectedDayIndex];
-      const vehLabel = state.vehicleType === 'carro' ? 'Carro' : 'Moto';
-      const timeInfo = state.selectedSlot ? `${day.label} às ${state.selectedSlot}` : 'Escolha um horário';
-      document.getElementById('dockSubtitle').textContent = `${vehLabel} • ${timeInfo}`;
-      document.getElementById('dockTotal').textContent = formatBRL(total);
-    }
-
-    // 6. User Actions
-    document.querySelectorAll('#vehicleSelector .seg-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#vehicleSelector .seg-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.vehicleType = btn.dataset.type;
-        state.extras.clear();
-        renderMainService();
-        renderExtras();
-        updateDock();
-      });
-    });
-
-    function toggleExtra(id) {
-      if (state.extras.has(id)) state.extras.delete(id);
-      else state.extras.add(id);
-      renderExtras();
-      updateDock();
-    }
-
-    function selectDay(idx) {
-      state.selectedDayIndex = idx;
-      state.selectedSlot = null;
-      renderDays();
-      renderSlots();
-      updateDock();
-    }
-
-    function selectSlot(time) {
-      state.selectedSlot = time;
-      renderSlots();
-      updateDock();
-    }
-
-    // Modals & Bottom Sheets Control
-    const backdrop = document.getElementById('backdrop');
-    const detailsSheet = document.getElementById('detailsSheet');
-    const checkoutSheet = document.getElementById('checkoutSheet');
-    const successPopup = document.getElementById('successPopup');
-    const logoPopup = document.getElementById('logoPopup');
-
-    function closeAllModals() {
-      backdrop.classList.remove('open');
-      detailsSheet.classList.remove('open');
-      checkoutSheet.classList.remove('open');
-      successPopup.classList.remove('open');
-      logoPopup.classList.remove('open');
-    }
-
-    backdrop.addEventListener('click', closeAllModals);
-    document.getElementById('selectFromDetailBtn').addEventListener('click', closeAllModals);
-    document.getElementById('closePopupBtn').addEventListener('click', closeAllModals);
-
-    function openLogoModal() {
-      backdrop.classList.add('open');
-      logoPopup.classList.add('open');
-    }
-
-    function openServiceDetails(id) {
-      const cat = CATALOG[state.vehicleType];
-      const item = id === 'main' ? cat.main : cat.extras.find(e => e.id === id);
-      if (!item) return;
-
-      document.getElementById('detailTitle').textContent = item.name;
-      document.getElementById('detailSubtitle').textContent = item.fullIntro + (item.duration ? ` (Tempo médio: ${item.duration})` : '');
-
-      document.getElementById('detailSteps').innerHTML = item.steps.map((st, idx) => `
-        <li>
-          <div class="step-num">${idx + 1}</div>
-          <div>
-            <strong>${st.title}</strong>
-            <span>${st.desc}</span>
+      document.getElementById('promosContainer').innerHTML = ownerState.promos.map(pr => `
+        <div class="glass promo-card">
+          <div class="promo-header">
+            <strong style="font-size:14px;">🔥 ${pr.title}</strong>
+            <label class="switch">
+              <input type="checkbox" ${pr.active ? 'checked' : ''} onchange="togglePromo(${pr.id})">
+              <span class="slider"></span>
+            </label>
           </div>
-        </li>
+          <p style="font-size:12px; color:var(--text-secondary);">${pr.desc}</p>
+        </div>
       `).join('');
 
+      document.getElementById('couponsContainer').innerHTML = ownerState.coupons.map(cp => `
+        <div class="glass coupon-card">
+          <div class="coupon-header">
+            <span class="coupon-code">${cp.code}</span>
+            <label class="switch">
+              <input type="checkbox" ${cp.active ? 'checked' : ''} onchange="toggleCoupon(${cp.id})">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <p style="font-size:12px; color:var(--text-secondary);">Desconto de <strong>${cp.percent}%</strong> • Usado ${cp.uses}x este mês</p>
+        </div>
+      `).join('');
+    }
+
+    function updatePrice(id, val) {
+      const p = ownerState.prices.find(item => item.id === id);
+      if (p) p.price = Number(val) || 0;
+      showToast('Valor atualizado na tabela!');
+    }
+
+    function savePricesToast() {
+      showToast('Tabela de preços atualizada para os clientes!');
+    }
+
+    function togglePromo(id) {
+      const pr = ownerState.promos.find(p => p.id === id);
+      if (pr) {
+        pr.active = !pr.active;
+        showToast(pr.active ? 'Promoção ativada!' : 'Promoção pausada.');
+      }
+    }
+
+    function toggleCoupon(id) {
+      const cp = ownerState.coupons.find(c => c.id === id);
+      if (cp) {
+        cp.active = !cp.active;
+        showToast(cp.active ? `Cupom ${cp.code} ativo!` : `Cupom ${cp.code} desativado.`);
+      }
+    }
+
+    // Bottom Sheets Logic
+    const backdrop = document.getElementById('backdrop');
+    function closeAllSheets() {
+      backdrop.classList.remove('open');
+      document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
+    }
+
+    function openSheet(id) {
+      closeAllSheets();
       backdrop.classList.add('open');
-      detailsSheet.classList.add('open');
+      document.getElementById(id).classList.add('open');
     }
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2600);
-    }
+    function openNewBookingSheet() { openSheet('newBookingSheet'); }
+    function openNewProductSheet() { openSheet('newProductSheet'); }
+    function openNewPromoSheet() { openSheet('newPromoSheet'); }
+    function openNewCouponSheet() { openSheet('newCouponSheet'); }
+    function openExpenseSheet() { openSheet('expenseSheet'); }
 
-    // Open Booking Form Sheet
-    document.getElementById('openCheckoutBtn').addEventListener('click', () => {
-      if (!state.selectedSlot) {
-        showToast('Selecione um horário disponível de Sábado ou Domingo');
-        document.getElementById('slotsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    function createManualBooking() {
+      const client = document.getElementById('nbName').value.trim();
+      const phone = document.getElementById('nbPhone').value.trim() || '62999999999';
+      const vehicle = document.getElementById('nbVehicle').value.trim();
+      const day = document.getElementById('nbDay').value;
+      const time = document.getElementById('nbTime').value;
+      const services = document.getElementById('nbService').value.trim();
+      const total = Number(document.getElementById('nbPrice').value) || 85;
+      const obs = document.getElementById('nbObs').value.trim();
+
+      if (!client || !vehicle) {
+        showToast('Preencha nome do cliente e veículo');
         return;
       }
 
-      const cat = CATALOG[state.vehicleType];
-      const day = WEEKEND_DAYS[state.selectedDayIndex];
-      let total = cat.main.price;
-
-      let extrasHtml = '';
-      state.extras.forEach(id => {
-        const ext = cat.extras.find(e => e.id === id);
-        if (ext) {
-          total += ext.price;
-          extrasHtml += `<div class="summary-line"><span>+ ${ext.name}</span><span>${formatBRL(ext.price)}</span></div>`;
-        }
+      ownerState.bookings.unshift({
+        id: Date.now(),
+        client,
+        phone,
+        vehicle,
+        day,
+        time,
+        services,
+        obs,
+        total,
+        status: 'agendado'
       });
 
-      document.getElementById('checkoutSummary').innerHTML = `
-        <div class="summary-line"><span>Protocolo</span><strong>${cat.main.name}</strong></div>
-        <div class="summary-line"><span>Data e Horário</span><strong>${day.fullTitle} às ${state.selectedSlot}</strong></div>
-        ${extrasHtml}
-        <div class="summary-line total"><span>Total</span><span>${formatBRL(total)}</span></div>
-      `;
+      document.getElementById('nbName').value = '';
+      document.getElementById('nbPhone').value = '';
+      document.getElementById('nbVehicle').value = '';
+      document.getElementById('nbObs').value = '';
 
-      backdrop.classList.add('open');
-      checkoutSheet.classList.add('open');
-    });
+      closeAllSheets();
+      renderDashboard();
+      renderAgenda();
+      showToast('Cliente agendado com sucesso!');
+    }
 
-    // Confirm Booking Locally -> Show Pop-up with KB Detail co. message + GPS icon
-    document.getElementById('confirmBookingBtn').addEventListener('click', () => {
-      const name = document.getElementById('clientName').value.trim();
-      const phone = document.getElementById('clientPhone').value.trim();
-      const vehicle = document.getElementById('carModel').value.trim();
-      const notes = document.getElementById('washNotes').value.trim();
+    function createProduct() {
+      const name = document.getElementById('npName').value.trim();
+      const cat = document.getElementById('npCat').value.trim() || 'Geral';
+      const qty = Number(document.getElementById('npQty').value) || 1;
+      const min = Number(document.getElementById('npMin').value) || 2;
 
-      if (!name || !phone || !vehicle) {
-        showToast('Preencha nome, telefone e qual o veículo');
+      if (!name) {
+        showToast('Informe o nome do produto');
         return;
       }
 
-      const day = WEEKEND_DAYS[state.selectedDayIndex];
-      const bookedTime = state.selectedSlot;
+      ownerState.stock.unshift({
+        id: Date.now(),
+        name,
+        cat,
+        qty,
+        min,
+        max: Math.max(qty + 2, 6),
+        unit: 'unid.'
+      });
 
-      // Mark slot as booked locally
-      const slotObj = day.slots.find(s => s.time === bookedTime);
-      if (slotObj) slotObj.busy = true;
+      document.getElementById('npName').value = '';
+      closeAllSheets();
+      renderStock();
+      renderDashboard();
+      showToast('Produto adicionado ao estoque!');
+    }
 
-      // Update popup message with client details
-      document.getElementById('popupMessage').innerHTML = `
-        Olá <strong>${name}</strong>! A empresa <strong>KB Detail co.</strong> recebeu o seu horário para <strong>${day.fullTitle} às ${bookedTime}</strong> (${vehicle}) e ele já está marcado!${notes ? `<br><small style="opacity:0.8;">Obs: ${notes}</small>` : ''}<br><br>Toque no ícone de GPS abaixo para chegar até nós:
-      `;
+    function createPromo() {
+      const title = document.getElementById('prTitle').value.trim();
+      const desc = document.getElementById('prDesc').value.trim();
+      if (!title || !desc) {
+        showToast('Preencha título e regra da promoção');
+        return;
+      }
+      ownerState.promos.unshift({ id: Date.now(), title, desc, active: true });
+      document.getElementById('prTitle').value = '';
+      document.getElementById('prDesc').value = '';
+      closeAllSheets();
+      renderPricesAndPromos();
+      showToast('Promoção criada e ativa!');
+    }
 
-      // Reset form & slot selection
-      document.getElementById('clientName').value = '';
-      document.getElementById('clientPhone').value = '';
-      document.getElementById('carModel').value = '';
-      document.getElementById('washNotes').value = '';
-      state.selectedSlot = null;
+    function createCoupon() {
+      const code = document.getElementById('cpCode').value.trim().toUpperCase();
+      const percent = Number(document.getElementById('cpPercent').value) || 10;
+      if (!code) {
+        showToast('Digite o código do cupom');
+        return;
+      }
+      ownerState.coupons.unshift({ id: Date.now(), code, percent, uses: 0, active: true });
+      document.getElementById('cpCode').value = '';
+      closeAllSheets();
+      renderPricesAndPromos();
+      showToast(`Cupom ${code} criado!`);
+    }
 
-      renderSlots();
-      updateDock();
+    function registerExpense() {
+      const desc = document.getElementById('exDesc').value.trim();
+      const val = Number(document.getElementById('exVal').value) || 0;
+      if (!desc || val <= 0) {
+        showToast('Informe a descrição e o valor');
+        return;
+      }
+      ownerState.weeklyRevenue = Math.max(0, ownerState.weeklyRevenue - val);
+      ownerState.monthlyRevenue = Math.max(0, ownerState.monthlyRevenue - val);
+      document.getElementById('exDesc').value = '';
+      document.getElementById('exVal').value = '';
+      closeAllSheets();
+      renderDashboard();
+      showToast(`Despesa de ${formatBRL(val)} lançada!`);
+    }
 
-      // Switch from Checkout Sheet to Confirmation Pop-up
-      checkoutSheet.classList.remove('open');
-      backdrop.classList.add('open');
-      successPopup.classList.add('open');
-    });
-
-    // Initialize App
-    renderMainService();
-    renderExtras();
-    renderDays();
-    renderSlots();
-    updateDock();
+    // Initialize Owner Dashboard
+    renderDashboard();
+    renderAgenda();
+    renderStock();
+    renderPricesAndPromos();
   </script>
 </body>
 </html>
