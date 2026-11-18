@@ -229,7 +229,6 @@
       background: none; border: none; cursor: pointer; font-family: inherit;
     }
 
-    /* Botão em volta destacado para ações de Salvar / Nova Promoção / Criar Cupom */
     .action-pill-btn {
       padding: 8px 14px;
       border-radius: 12px;
@@ -813,7 +812,7 @@
     // =========================================================================
     // COLE A URL DO SEU GOOGLE APPS SCRIPT (/exec) AQUI NO INÍCIO:
     // =========================================================================
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxHHM4aq5PpA4aM7By35Erg-KHgtKhwyfYaIbzg84Ewq5GiSl38vD9DqYHtGZBvyxQSHg/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwmUUlohjk70-PKkUCh_AN17BTO0sXj13G3Q80M-3KoL7X2PeZ6c0RsUy6TunPjuPm4xg/exec";
 
     // PWA Manifest dinâmico
     const baseHref = new URL('.', window.location.href).href;
@@ -879,7 +878,6 @@
       const overlay = document.getElementById('inadimplenteLockOverlay');
       const shell = document.getElementById('mainAppShell');
       if (locked) {
-        // Limpa dados da memória e bloqueia a visualização
         ownerState.bookings = [];
         ownerState.stock = [];
         ownerState.prices = [];
@@ -925,10 +923,9 @@
 
       if (manual) statusEl.textContent = 'Sincronizando planilha...';
       try {
-        const res = await fetch(url);
+        const res = await fetch(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`, { cache: 'no-store' });
         const data = await res.json();
 
-        // Verifica trava de inadimplência vinda exclusivamente da planilha
         const licStatus = String(data.assinaturaStatus || 'ATIVO').toUpperCase();
         if (licStatus === 'BLOQUEADO' || licStatus === 'INADIMPLENTE' || licStatus === 'OFF') {
           applyLicenseLockState(true);
@@ -1050,7 +1047,6 @@
 
     function renderAgenda() {
       let list = ownerState.bookings;
-      // Carros concluídos aparecem SOMENTE na aba 'concluido'
       if (ownerState.agendaFilter === 'concluido') {
         list = list.filter(b => b.Status === 'concluido');
       } else {
@@ -1068,8 +1064,13 @@
       const item = ownerState.bookings.find(b => String(b.ID) === String(id));
       if (item) item.Status = nextStatus;
       renderAll();
-      showToast(nextStatus === 'concluido' ? 'Lavagem concluída e movida para Concluídos!' : 'Veículo no box! Cliente notificado no app.');
+      showToast(nextStatus === 'concluido' ? 'Lavagem concluída! Atualizando planilha...' : 'Veículo no box! Atualizando planilha...');
       await apiPost({ action: 'update_booking_status', id, status: nextStatus });
+      await new Promise(r => setTimeout(r, 900));
+      await syncOwnerData(false);
+      if (nextStatus === 'concluido') {
+        showToast('Lavagem concluída e planilha sincronizada!');
+      }
     }
 
     document.querySelectorAll('#agendaFilters .filter-chip').forEach(chip => {
@@ -1145,6 +1146,7 @@
         trabalha,
         horarios: trabalha === 'SIM' ? horarios : ''
       });
+      await new Promise(r => setTimeout(r, 900));
       await syncOwnerData(false);
       showToast('Dias e horários atualizados para os clientes!');
     }
@@ -1187,6 +1189,8 @@
       renderStock();
       renderDashboard();
       await apiPost({ action: 'update_stock', id: item.ID, qty: item.Qtd });
+      await new Promise(r => setTimeout(r, 700));
+      await syncOwnerData(false);
     }
 
     function renderPricesAndPromos() {
@@ -1244,20 +1248,25 @@
     async function savePricesToSheet() {
       showToast('Salvando preços na planilha...');
       await apiPost({ action: 'save_prices', prices: ownerState.prices });
+      await new Promise(r => setTimeout(r, 900));
+      await syncOwnerData(false);
       showToast('Preços atualizados para todos os clientes!');
     }
 
     async function togglePromo(id, active) {
       await apiPost({ action: 'toggle_promo', id, active });
+      await new Promise(r => setTimeout(r, 700));
+      await syncOwnerData(false);
       showToast(active ? 'Promoção ativada!' : 'Promoção pausada.');
     }
 
     async function toggleCoupon(id, active) {
       await apiPost({ action: 'toggle_coupon', id, active });
+      await new Promise(r => setTimeout(r, 700));
+      await syncOwnerData(false);
       showToast(active ? 'Cupom ativado!' : 'Cupom desativado.');
     }
 
-    // Popula o select de serviços no agendamento manual com os preços reais da planilha
     function populateManualBookingServices() {
       const sel = document.getElementById('nbServiceSelect');
       sel.innerHTML = ownerState.prices.map(p =>
@@ -1345,8 +1354,14 @@
       closeAllSheets();
       showToast('Salvando agendamento...');
       await apiPost({ action: 'create_booking', client, phone, vehicle, day, dateStr, time, services, obs, total });
+      await new Promise(r => setTimeout(r, 900));
       await syncOwnerData(false);
-      showToast('Cliente agendado na planilha!');
+
+      document.getElementById('nbName').value = '';
+      document.getElementById('nbPhone').value = '';
+      document.getElementById('nbVehicle').value = '';
+      document.getElementById('nbObs').value = '';
+      showToast('Cliente agendado e planilha atualizada!');
     }
 
     async function createProduct() {
@@ -1358,6 +1373,7 @@
 
       closeAllSheets();
       await apiPost({ action: 'create_product', name, cat, qty, min, max: Math.max(qty + 2, 6), unit: 'unid.' });
+      await new Promise(r => setTimeout(r, 900));
       await syncOwnerData(false);
       showToast('Produto cadastrado!');
     }
@@ -1369,6 +1385,7 @@
 
       closeAllSheets();
       await apiPost({ action: 'create_promo', title, desc });
+      await new Promise(r => setTimeout(r, 900));
       await syncOwnerData(false);
       showToast('Promoção criada!');
     }
@@ -1380,6 +1397,7 @@
 
       closeAllSheets();
       await apiPost({ action: 'create_coupon', code, percent });
+      await new Promise(r => setTimeout(r, 900));
       await syncOwnerData(false);
       showToast(`Cupom ${code} criado!`);
     }
@@ -1391,6 +1409,7 @@
 
       closeAllSheets();
       await apiPost({ action: 'create_expense', desc, val });
+      await new Promise(r => setTimeout(r, 900));
       await syncOwnerData(false);
       showToast('Despesa registrada na planilha!');
     }
@@ -1403,10 +1422,14 @@
       renderPricesAndPromos();
     }
 
-    // Boot + Auto Reload a cada 30 segundos
+    // Boot (sincroniza ao abrir e quando volta para a aba do app)
     updatePushCardState();
     syncOwnerData(false);
-    setInterval(() => syncOwnerData(false), 30000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        syncOwnerData(false);
+      }
+    });
   </script>
 </body>
 </html>
