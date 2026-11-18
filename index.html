@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KB Detail Admin">
-  <title>KB Detail co</title>
+  <title>KB Detail co — Admin</title>
   <link rel="manifest" id="pwa-manifest">
   <link rel="apple-touch-icon" href="kaik.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +71,6 @@
     }
 
     async function requestOwnerPush() {
-      // No iOS, o Safari exige que o app esteja instalado na Tela de Início
       if (isIOS() && !isStandalonePWA()) {
         showToast("Instale na Tela de Início primeiro!");
         alert("No iPhone, toque no botão Compartilhar (quadrado com seta) e depois em 'Adicionar à Tela de Início'. Abra o app pelo ícone criado para ativar os alertas.");
@@ -84,9 +83,7 @@
       }
 
       try {
-        // Dispara o prompt nativo diretamente no gesto do toque (obrigatório no iOS/Android PWA)
         const permission = await Notification.requestPermission();
-
         if (permission !== 'granted') {
           showToast("Permissão negada nas configurações.");
           updatePushCardState();
@@ -135,7 +132,6 @@
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
     }
 
     html, body {
@@ -145,9 +141,27 @@
       color: var(--text-primary);
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       overflow-x: hidden;
-      overscroll-behavior-y: none;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
       -webkit-font-smoothing: antialiased;
-      user-select: none;
+    }
+
+    button, a, input, select, label {
+      touch-action: manipulation;
+    }
+
+    /* Tela de Bloqueio por Inadimplência (Controlada Exclusivamente pela Planilha) */
+    #inadimplenteLockOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #07090e;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
     }
 
     .ambient-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
@@ -211,8 +225,32 @@
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 2px; }
     .section-header h3 { font-size: 16px; font-weight: 700; }
     .section-header span, .section-link {
-      font-size: 12px; color: var(--accent); font-weight: 600;
+      font-size: 12px; color: var(--accent); font-weight: 700;
       background: none; border: none; cursor: pointer; font-family: inherit;
+    }
+
+    /* Botão em volta destacado para ações de Salvar / Nova Promoção / Criar Cupom */
+    .action-pill-btn {
+      padding: 8px 14px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: var(--accent);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.15);
+      transition: transform 0.15s;
+    }
+    .action-pill-btn:active { transform: scale(0.95); }
+    .action-pill-btn.success {
+      background: rgba(52, 211, 153, 0.18);
+      border-color: rgba(52, 211, 153, 0.48);
+      color: var(--success);
     }
 
     /* Push Banner */
@@ -295,6 +333,30 @@
     }
     .sm-btn.primary { background: var(--accent); color: #05111e; border-color: var(--accent); }
     .sm-btn.done { background: rgba(52, 211, 153, 0.2); color: var(--success); border-color: rgba(52, 211, 153, 0.4); }
+
+    /* Calendar Schedule Config Grid */
+    .hours-toggle-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 10px 0 14px;
+    }
+    .hour-chip {
+      padding: 10px 4px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .hour-chip.active {
+      background: rgba(56, 189, 248, 0.22);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
 
     /* Stock */
     .stock-list { display: flex; flex-direction: column; gap: 11px; }
@@ -415,6 +477,17 @@
 </head>
 <body>
 
+  <!-- Tela de Bloqueio Controlada Exclusivamente pela Planilha -->
+  <div id="inadimplenteLockOverlay">
+    <div class="glass" style="max-width: 360px; padding: 32px 24px; border-radius: 28px; border-color: rgba(248, 113, 113, 0.4);">
+      <div style="font-size: 52px; margin-bottom: 14px;">🔒</div>
+      <h2 style="font-size: 22px; font-weight: 800; color: var(--danger); margin-bottom: 10px;">Você não está em dias</h2>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
+        O acesso ao painel administrativo, agenda e leitura da planilha foi suspenso por pendência na assinatura. Entre em contato com o suporte para regularizar e reativar seu sistema.
+      </p>
+    </div>
+  </div>
+
   <div class="ambient-bg">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -423,7 +496,7 @@
 
   <div id="toast" class="toast">Aviso</div>
 
-  <main class="app-shell">
+  <main class="app-shell" id="mainAppShell">
     <!-- Header -->
     <header>
       <div class="brand">
@@ -437,7 +510,7 @@
       </div>
 
       <div class="header-btns">
-        <button class="glass icon-btn" onclick="syncOwnerData()" title="Atualizar Dados">
+        <button class="glass icon-btn" onclick="syncOwnerData(true)" title="Atualizar Dados">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
 
@@ -496,9 +569,9 @@
           <div class="owner-btn-icon" style="background: rgba(56,189,248,0.18); color: var(--accent);">+</div>
           <span>Encaixar Cliente</span>
         </button>
-        <button class="glass owner-btn" onclick="switchTab('prices')">
-          <div class="owner-btn-icon" style="background: rgba(251,191,36,0.18); color: var(--gold);">%</div>
-          <span>Cupom / Promo</span>
+        <button class="glass owner-btn" onclick="openSheet('workHoursSheet')">
+          <div class="owner-btn-icon" style="background: rgba(168,85,247,0.18); color: #c084fc;">🗓️</div>
+          <span>Dias & Horários</span>
         </button>
         <button class="glass owner-btn" onclick="switchTab('stock')">
           <div class="owner-btn-icon" style="background: rgba(248,113,113,0.18); color: var(--danger);">!</div>
@@ -521,11 +594,14 @@
     <section id="tab-agenda" class="tab-view">
       <div class="section-header">
         <h3>Clientes Agendados</h3>
-        <button class="section-link" onclick="openSheet('newBookingSheet')">+ Novo Horário</button>
+        <div style="display:flex; gap:6px;">
+          <button class="action-pill-btn" onclick="openSheet('workHoursSheet')">🗓️ Horários</button>
+          <button class="action-pill-btn success" onclick="openSheet('newBookingSheet')">+ Novo</button>
+        </div>
       </div>
 
       <div class="filter-row" id="agendaFilters">
-        <button class="filter-chip active" data-filter="todos">Todos</button>
+        <button class="filter-chip active" data-filter="todos">Todos (Ativos)</button>
         <button class="filter-chip" data-filter="Sábado">Sábado</button>
         <button class="filter-chip" data-filter="Domingo">Domingo</button>
         <button class="filter-chip" data-filter="concluido">Concluídos</button>
@@ -538,7 +614,7 @@
     <section id="tab-stock" class="tab-view">
       <div class="section-header">
         <h3>Estoque de Produtos</h3>
-        <button class="section-link" onclick="openSheet('newProductSheet')">+ Novo Produto</button>
+        <button class="action-pill-btn" onclick="openSheet('newProductSheet')">+ Novo Produto</button>
       </div>
       <div class="stock-list" id="stockListContainer"></div>
     </section>
@@ -547,19 +623,19 @@
     <section id="tab-prices" class="tab-view">
       <div class="section-header">
         <h3>Tabela de Preços</h3>
-        <button class="section-link" onclick="savePricesToSheet()">Salvar na Planilha</button>
+        <button class="action-pill-btn success" onclick="savePricesToSheet()">💾 Salvar na Planilha</button>
       </div>
       <div id="priceEditorContainer"></div>
 
       <div class="section-header" style="margin-top: 22px;">
         <h3>Promoções Ativas</h3>
-        <button class="section-link" onclick="openSheet('newPromoSheet')">+ Nova Promoção</button>
+        <button class="action-pill-btn" onclick="openSheet('newPromoSheet')">+ Nova Promoção</button>
       </div>
       <div id="promosContainer"></div>
 
       <div class="section-header" style="margin-top: 22px;">
         <h3>Cupons de Desconto</h3>
-        <button class="section-link" onclick="openSheet('newCouponSheet')">+ Criar Cupom</button>
+        <button class="action-pill-btn" onclick="openSheet('newCouponSheet')">+ Criar Cupom</button>
       </div>
       <div id="couponsContainer"></div>
     </section>
@@ -588,6 +664,37 @@
   <!-- Backdrop -->
   <div class="sheet-backdrop" id="backdrop" onclick="closeAllSheets()"></div>
 
+  <!-- Sheet: Configurar Dias & Horários de Trabalho no Calendário -->
+  <div class="bottom-sheet" id="workHoursSheet">
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">🗓️ Agenda & Horários de Trabalho</h3>
+    <p class="sheet-subtitle">Selecione uma data no calendário para definir se vai trabalhar e quais horários estarão abertos para os clientes.</p>
+
+    <div class="form-group">
+      <label>Escolha a Data no Calendário</label>
+      <input type="date" id="whDateInput" class="glass-input" onchange="loadScheduleForSelectedDate()">
+    </div>
+
+    <div class="form-group">
+      <label>Status do Dia</label>
+      <select id="whWorkSelect" class="glass-select" onchange="toggleWorkDayUI()">
+        <option value="SIM">✅ Vou trabalhar neste dia</option>
+        <option value="NAO">🚫 Não vou trabalhar (Folga / Fechado)</option>
+      </select>
+    </div>
+
+    <div id="whHoursSection">
+      <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">Toque para marcar/desmarcar os horários:</label>
+      <div class="hours-toggle-grid" id="whHoursGrid"></div>
+      <div class="form-group">
+        <label>Ou digite horários personalizados (separados por vírgula)</label>
+        <input type="text" id="whCustomHoursInput" class="glass-input" placeholder="Ex: 08:00, 09:00, 10:00, 13:00">
+      </div>
+    </div>
+
+    <button class="full-btn" onclick="saveScheduleConfig()">Salvar Agenda deste Dia</button>
+  </div>
+
   <!-- Sheet: Gear Config -->
   <div class="bottom-sheet" id="configSheet">
     <div class="sheet-handle"></div>
@@ -600,7 +707,7 @@
     <button class="full-btn" onclick="saveScriptUrl()">Salvar e Sincronizar</button>
   </div>
 
-  <!-- Sheet: Manual Booking -->
+  <!-- Sheet: Manual Booking (Puxa serviços e valores automaticamente da planilha) -->
   <div class="bottom-sheet" id="newBookingSheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title">Novo Agendamento Manual</h3>
@@ -617,28 +724,19 @@
       <input type="text" id="nbVehicle" class="glass-input" placeholder="Ex: Civic Touring Cinza">
     </div>
     <div class="form-group">
-      <label>Dia e Horário (Fim de Semana)</label>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <select id="nbDay" class="glass-select">
-          <option value="Sábado">Sábado</option>
-          <option value="Domingo">Domingo</option>
-        </select>
-        <select id="nbTime" class="glass-select">
-          <option value="08:00">08:00</option>
-          <option value="09:30">09:30</option>
-          <option value="11:00">11:00</option>
-          <option value="13:30">13:30</option>
-          <option value="15:00">15:00</option>
-          <option value="16:30">16:30</option>
-        </select>
+      <label>Data e Horário Livre</label>
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px;">
+        <input type="date" id="nbDate" class="glass-input">
+        <input type="time" id="nbTime" class="glass-input" value="08:00">
       </div>
     </div>
     <div class="form-group">
-      <label>Serviço & Valor (R$)</label>
-      <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 8px;">
-        <input type="text" id="nbService" class="glass-input" value="Lavagem Detalhada Carro">
-        <input type="number" id="nbPrice" class="glass-input" value="85">
-      </div>
+      <label>Serviço (Tabela da Planilha)</label>
+      <select id="nbServiceSelect" class="glass-select" onchange="onManualServiceChange()"></select>
+    </div>
+    <div class="form-group">
+      <label>Valor Final (R$)</label>
+      <input type="number" id="nbPrice" class="glass-input" value="85">
     </div>
     <div class="form-group">
       <label>Observação</label>
@@ -713,19 +811,11 @@
 
   <script>
     // =========================================================================
-    // URL DO GOOGLE APPS SCRIPT (/exec):
+    // COLE A URL DO SEU GOOGLE APPS SCRIPT (/exec) AQUI NO INÍCIO:
     // =========================================================================
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMhC5Wln07eTRPw0oiZzXGQC1zBkqFsCQMwun9n8L0uydQlTFIf7XU4R-QBQTjbICowQ/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxn946Z8WTgfk9zhRBYISy39PtQlwpqlOdIfruTssy6Vbkdk4T-YqokeLt_TsG-lnC0YA/exec";
 
-    // Prevent Double-Tap Zoom
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (e) {
-      const now = Date.now();
-      if (now - lastTouchEnd <= 300) e.preventDefault();
-      lastTouchEnd = now;
-    }, { passive: false });
-
-    // PWA Manifest dinâmico com caminho absoluto para funcionar ao salvar na Tela de Início
+    // PWA Manifest dinâmico
     const baseHref = new URL('.', window.location.href).href;
     const manifestData = {
       name: "KB Detail co. — Gestão do Proprietário",
@@ -746,9 +836,14 @@
       return APPS_SCRIPT_URL;
     }
 
+    const ALL_PRESET_HOURS = ["08:00", "09:00", "09:30", "10:00", "11:00", "13:00", "13:30", "14:00", "15:00", "16:00", "16:30", "17:30"];
+    let selectedWorkHours = ["08:00", "09:30", "11:00", "13:30", "15:00", "16:30"];
+
     let ownerState = {
+      isLocked: false,
       agendaFilter: 'todos',
       bookings: [],
+      scheduleConfig: [],
       stock: [
         { ID: '1', Nome: 'Shampoo Snow Foam V-Floc (5L)', Categoria: 'Pré-Lavagem', Qtd: 3, Minimo: 2, Maximo: 6, Unidade: 'galões' },
         { ID: '2', Nome: 'Revitalizador Restaurax (500ml)', Categoria: 'Plásticos', Qtd: 1, Minimo: 2, Maximo: 6, Unidade: 'frascos' },
@@ -779,7 +874,27 @@
       setTimeout(() => t.classList.remove('show'), 2500);
     }
 
+    function applyLicenseLockState(locked) {
+      ownerState.isLocked = locked;
+      const overlay = document.getElementById('inadimplenteLockOverlay');
+      const shell = document.getElementById('mainAppShell');
+      if (locked) {
+        // Limpa dados da memória e bloqueia a visualização
+        ownerState.bookings = [];
+        ownerState.stock = [];
+        ownerState.prices = [];
+        ownerState.expenses = [];
+        closeAllSheets();
+        shell.style.display = 'none';
+        overlay.style.display = 'flex';
+      } else {
+        overlay.style.display = 'none';
+        shell.style.display = 'block';
+      }
+    }
+
     async function apiPost(payload) {
+      if (ownerState.isLocked) return null;
       const url = getScriptUrl();
       if (!url) {
         showToast('Configure a URL do Apps Script primeiro');
@@ -799,7 +914,7 @@
       }
     }
 
-    async function syncOwnerData() {
+    async function syncOwnerData(manual = false) {
       const url = getScriptUrl();
       const statusEl = document.getElementById('syncStatusText');
       if (!url) {
@@ -808,18 +923,30 @@
         return;
       }
 
-      statusEl.textContent = 'Sincronizando planilha...';
+      if (manual) statusEl.textContent = 'Sincronizando planilha...';
       try {
         const res = await fetch(url);
         const data = await res.json();
+
+        // Verifica trava de inadimplência vinda exclusivamente da planilha
+        const licStatus = String(data.assinaturaStatus || 'ATIVO').toUpperCase();
+        if (licStatus === 'BLOQUEADO' || licStatus === 'INADIMPLENTE' || licStatus === 'OFF') {
+          applyLicenseLockState(true);
+          return;
+        } else {
+          applyLicenseLockState(false);
+        }
+
         if (data.ok) {
-          ownerState.bookings = (data.agendamentos || []).reverse();
+          ownerState.bookings = (data.agendamentos || []).filter(b => b.Status !== 'cancelado').reverse();
+          ownerState.scheduleConfig = data.agendaConfig || [];
           if (data.estoque && data.estoque.length) ownerState.stock = data.estoque;
           if (data.precos && data.precos.length) ownerState.prices = data.precos;
           ownerState.promos = data.promocoes || [];
           ownerState.coupons = data.cupons || [];
           ownerState.expenses = data.despesas || [];
           statusEl.textContent = 'Planilha Google • Online';
+          if (manual) showToast('Dados atualizados!');
         }
       } catch (e) {
         statusEl.textContent = 'Falha ao ler planilha';
@@ -828,6 +955,7 @@
     }
 
     function switchTab(tabName) {
+      if (ownerState.isLocked) return;
       document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
       document.getElementById(`tab-${tabName}`).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabName));
@@ -851,19 +979,27 @@
       document.getElementById('monthlyRevenueVal').textContent = formatBRL(netMonthly);
       document.getElementById('monthlyExpensesSub').textContent = `Despesas: ${formatBRL(expensesSum)}`;
 
-      const count = ownerState.bookings.length;
+      const activeBookings = ownerState.bookings.filter(b => b.Status !== 'concluido');
+      const count = activeBookings.length;
       const totalAll = concludedSum + predictedSum;
-      const avg = count ? Math.round(totalAll / count) : 0;
+      const avg = ownerState.bookings.length ? Math.round(totalAll / ownerState.bookings.length) : 0;
       const lowStock = ownerState.stock.filter(s => Number(s.Qtd) <= Number(s.Minimo)).length;
 
       document.getElementById('statBookingsCount').textContent = count;
       document.getElementById('statTicketAvg').textContent = `R$ ${avg}`;
       document.getElementById('statLowStock').textContent = lowStock;
 
-      const nextClients = ownerState.bookings.filter(b => b.Status !== 'concluido').slice(0, 3);
+      const nextClients = activeBookings.slice(0, 3);
       document.getElementById('dashboardNextList').innerHTML = nextClients.length
         ? nextClients.map(renderBookingCard).join('')
         : `<p style="color:var(--text-secondary); font-size:13px; text-align:center; padding:18px 0;">Nenhum cliente pendente na fila.</p>`;
+    }
+
+    function getGreetingByHour() {
+      const h = new Date().getHours();
+      if (h >= 5 && h < 12) return 'Bom dia';
+      if (h >= 12 && h < 18) return 'Boa tarde';
+      return 'Boa noite';
     }
 
     function renderBookingCard(b) {
@@ -882,7 +1018,14 @@
       }
 
       const cleanPhone = String(b.Telefone || '').replace(/\D/g, '');
-      const wppMsg = encodeURIComponent(`Olá ${b.Cliente}! Aqui é da KB Detail co. Confirmando seu horário de ${b.Dia} (${b.Data}) às ${b.Horario} para o veículo ${b.Veiculo}.`);
+      const saudacao = getGreetingByHour();
+      const rawMsg = b.Status === 'concluido'
+        ? `${saudacao}, *${b.Cliente}*! Tudo bem? Aqui é da *KB Detail co.* 🚘✨\n\nPassando para avisar que a estética do seu veículo *${b.Veiculo}* já foi *concluída* e ele está pronto para retirada!`
+        : b.Status === 'lavando'
+        ? `${saudacao}, *${b.Cliente}*! Tudo bem? Aqui é da *KB Detail co.* 🚿✨\n\nPassando para avisar que o seu veículo *${b.Veiculo}* já entrou no box e iniciamos o serviço (${b.Servicos}).`
+        : `${saudacao}, *${b.Cliente}*! Tudo bem? Aqui é da *KB Detail co.* 🚘✨\n\nPassando para confirmar seu agendamento:\n• *Veículo:* ${b.Veiculo}\n• *Data:* ${b.Dia}${b.Data ? ` (${b.Data})` : ''}\n• *Horário:* ${b.Horario}\n• *Serviço:* ${b.Servicos}\n\nQualquer dúvida estamos à disposição!`;
+
+      const wppMsg = encodeURIComponent(rawMsg);
 
       return `
         <article class="glass booking-card">
@@ -907,21 +1050,25 @@
 
     function renderAgenda() {
       let list = ownerState.bookings;
-      if (ownerState.agendaFilter === 'Sábado' || ownerState.agendaFilter === 'Domingo') {
-        list = list.filter(b => b.Dia === ownerState.agendaFilter);
-      } else if (ownerState.agendaFilter === 'concluido') {
+      // Carros concluídos aparecem SOMENTE na aba 'concluido'
+      if (ownerState.agendaFilter === 'concluido') {
         list = list.filter(b => b.Status === 'concluido');
+      } else {
+        list = list.filter(b => b.Status !== 'concluido');
+        if (ownerState.agendaFilter === 'Sábado' || ownerState.agendaFilter === 'Domingo') {
+          list = list.filter(b => b.Dia === ownerState.agendaFilter);
+        }
       }
       document.getElementById('fullAgendaList').innerHTML = list.length
         ? list.map(renderBookingCard).join('')
-        : `<p style="text-align:center; color:var(--text-secondary); padding:30px 0; font-size:13px;">Nenhum agendamento encontrado.</p>`;
+        : `<p style="text-align:center; color:var(--text-secondary); padding:30px 0; font-size:13px;">Nenhum agendamento nesta aba.</p>`;
     }
 
     async function changeBookingStatus(id, nextStatus) {
       const item = ownerState.bookings.find(b => String(b.ID) === String(id));
       if (item) item.Status = nextStatus;
       renderAll();
-      showToast(nextStatus === 'concluido' ? 'Lavagem concluída e somada ao caixa!' : 'Veículo no box!');
+      showToast(nextStatus === 'concluido' ? 'Lavagem concluída e movida para Concluídos!' : 'Veículo no box! Cliente notificado no app.');
       await apiPost({ action: 'update_booking_status', id, status: nextStatus });
     }
 
@@ -933,6 +1080,74 @@
         renderAgenda();
       });
     });
+
+    // Configuração de Calendário & Horários do Proprietário
+    function initWorkHoursModal() {
+      const now = new Date();
+      const diff = (6 - now.getDay() + 7) % 7;
+      now.setDate(now.getDate() + diff);
+      document.getElementById('whDateInput').value = now.toISOString().split('T')[0];
+      loadScheduleForSelectedDate();
+    }
+
+    function loadScheduleForSelectedDate() {
+      const isoDate = document.getElementById('whDateInput').value;
+      const existing = ownerState.scheduleConfig.find(c => String(c.DataISO).trim() === String(isoDate).trim());
+      if (existing) {
+        const works = String(existing.Trabalha).toUpperCase() !== 'NAO';
+        document.getElementById('whWorkSelect').value = works ? 'SIM' : 'NAO';
+        selectedWorkHours = String(existing.Horarios || '').split(',').map(s => s.trim()).filter(Boolean);
+      } else {
+        document.getElementById('whWorkSelect').value = 'SIM';
+        selectedWorkHours = ["08:00", "09:30", "11:00", "13:30", "15:00", "16:30"];
+      }
+      document.getElementById('whCustomHoursInput').value = selectedWorkHours.join(', ');
+      toggleWorkDayUI();
+      renderWorkHoursGrid();
+    }
+
+    function toggleWorkDayUI() {
+      const val = document.getElementById('whWorkSelect').value;
+      document.getElementById('whHoursSection').style.display = val === 'SIM' ? 'block' : 'none';
+    }
+
+    function renderWorkHoursGrid() {
+      const grid = document.getElementById('whHoursGrid');
+      grid.innerHTML = ALL_PRESET_HOURS.map(h => {
+        const active = selectedWorkHours.includes(h);
+        return `<div class="hour-chip ${active ? 'active' : ''}" onclick="toggleWorkHourChip('${h}')">${h}</div>`;
+      }).join('');
+    }
+
+    function toggleWorkHourChip(h) {
+      if (selectedWorkHours.includes(h)) {
+        selectedWorkHours = selectedWorkHours.filter(x => x !== h);
+      } else {
+        selectedWorkHours.push(h);
+        selectedWorkHours.sort();
+      }
+      document.getElementById('whCustomHoursInput').value = selectedWorkHours.join(', ');
+      renderWorkHoursGrid();
+    }
+
+    async function saveScheduleConfig() {
+      const dataISO = document.getElementById('whDateInput').value;
+      const trabalha = document.getElementById('whWorkSelect').value;
+      const horarios = document.getElementById('whCustomHoursInput').value.trim();
+
+      if (!dataISO) return showToast('Selecione uma data no calendário');
+
+      closeAllSheets();
+      showToast('Salvando agenda na planilha...');
+      await apiPost({
+        action: 'save_schedule_config',
+        dataISO,
+        trabalha,
+        horarios: trabalha === 'SIM' ? horarios : ''
+      });
+      await syncOwnerData(false);
+      showToast('Dias e horários atualizados para os clientes!');
+    }
 
     function renderStock() {
       document.getElementById('stockListContainer').innerHTML = ownerState.stock.map(item => {
@@ -1042,6 +1257,28 @@
       showToast(active ? 'Cupom ativado!' : 'Cupom desativado.');
     }
 
+    // Popula o select de serviços no agendamento manual com os preços reais da planilha
+    function populateManualBookingServices() {
+      const sel = document.getElementById('nbServiceSelect');
+      sel.innerHTML = ownerState.prices.map(p =>
+        `<option value="${p.ID}" data-price="${p.Preco}" data-name="${p.Nome}">${p.Nome} — ${formatBRL(p.Preco)}</option>`
+      ).join('');
+      onManualServiceChange();
+
+      const now = new Date();
+      const diff = (6 - now.getDay() + 7) % 7;
+      now.setDate(now.getDate() + diff);
+      document.getElementById('nbDate').value = now.toISOString().split('T')[0];
+    }
+
+    function onManualServiceChange() {
+      const sel = document.getElementById('nbServiceSelect');
+      const opt = sel.options[sel.selectedIndex];
+      if (opt) {
+        document.getElementById('nbPrice').value = Number(opt.dataset.price) || 0;
+      }
+    }
+
     // Sheets Management
     const backdrop = document.getElementById('backdrop');
     function closeAllSheets() {
@@ -1050,9 +1287,14 @@
     }
 
     function openSheet(id) {
+      if (ownerState.isLocked) return;
       closeAllSheets();
       if (id === 'configSheet') {
         document.getElementById('scriptUrlInput').value = getScriptUrl();
+      } else if (id === 'newBookingSheet') {
+        populateManualBookingServices();
+      } else if (id === 'workHoursSheet') {
+        initWorkHoursModal();
       }
       backdrop.classList.add('open');
       document.getElementById(id).classList.add('open');
@@ -1063,28 +1305,47 @@
       localStorage.setItem(KEY_SCRIPT_URL, url);
       closeAllSheets();
       showToast('URL salva! Sincronizando...');
-      await syncOwnerData();
+      await syncOwnerData(true);
+    }
+
+    function getDayNameFromISO(isoDate) {
+      if (!isoDate) return 'Sábado';
+      const [y, m, d] = isoDate.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+      return days[dt.getDay()];
+    }
+
+    function formatISOToBR(isoDate) {
+      if (!isoDate || !isoDate.includes('-')) return isoDate;
+      const [y, m, d] = isoDate.split('-');
+      return `${d}/${m}/${y}`;
     }
 
     async function createManualBooking() {
       const client = document.getElementById('nbName').value.trim();
       const phone = document.getElementById('nbPhone').value.trim() || '62999999999';
       const vehicle = document.getElementById('nbVehicle').value.trim();
-      const day = document.getElementById('nbDay').value;
+      const isoDate = document.getElementById('nbDate').value;
       const time = document.getElementById('nbTime').value;
-      const services = document.getElementById('nbService').value.trim();
+      const sel = document.getElementById('nbServiceSelect');
+      const opt = sel.options[sel.selectedIndex];
+      const services = opt ? opt.dataset.name : 'Lavagem Detalhada';
       const total = Number(document.getElementById('nbPrice').value) || 85;
       const obs = document.getElementById('nbObs').value.trim();
 
-      if (!client || !vehicle) {
-        showToast('Preencha nome do cliente e veículo');
+      if (!client || !vehicle || !isoDate || !time) {
+        showToast('Preencha nome, veículo, data e horário');
         return;
       }
 
+      const day = getDayNameFromISO(isoDate);
+      const dateStr = formatISOToBR(isoDate);
+
       closeAllSheets();
       showToast('Salvando agendamento...');
-      await apiPost({ action: 'create_booking', client, phone, vehicle, day, time, services, obs, total });
-      await syncOwnerData();
+      await apiPost({ action: 'create_booking', client, phone, vehicle, day, dateStr, time, services, obs, total });
+      await syncOwnerData(false);
       showToast('Cliente agendado na planilha!');
     }
 
@@ -1097,7 +1358,7 @@
 
       closeAllSheets();
       await apiPost({ action: 'create_product', name, cat, qty, min, max: Math.max(qty + 2, 6), unit: 'unid.' });
-      await syncOwnerData();
+      await syncOwnerData(false);
       showToast('Produto cadastrado!');
     }
 
@@ -1108,7 +1369,7 @@
 
       closeAllSheets();
       await apiPost({ action: 'create_promo', title, desc });
-      await syncOwnerData();
+      await syncOwnerData(false);
       showToast('Promoção criada!');
     }
 
@@ -1119,7 +1380,7 @@
 
       closeAllSheets();
       await apiPost({ action: 'create_coupon', code, percent });
-      await syncOwnerData();
+      await syncOwnerData(false);
       showToast(`Cupom ${code} criado!`);
     }
 
@@ -1130,20 +1391,22 @@
 
       closeAllSheets();
       await apiPost({ action: 'create_expense', desc, val });
-      await syncOwnerData();
+      await syncOwnerData(false);
       showToast('Despesa registrada na planilha!');
     }
 
     function renderAll() {
+      if (ownerState.isLocked) return;
       renderDashboard();
       renderAgenda();
       renderStock();
       renderPricesAndPromos();
     }
 
-    // Boot
+    // Boot + Auto Reload a cada 30 segundos
     updatePushCardState();
-    syncOwnerData();
+    syncOwnerData(false);
+    setInterval(() => syncOwnerData(false), 30000);
   </script>
 </body>
 </html>
